@@ -3,6 +3,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "shunkaixu-com",
   "compatibility_date": "2026-11-19",
+  // Keep the *.workers.dev test link and preview links on.
+  "workers_dev": true,
+  "preview_urls": true,
+  // The real addresses. Cloudflare sets up DNS and HTTPS for each one on deploy.
+  "routes": [
+    { "pattern": "shunkaixu.com", "custom_domain": true },
+    { "pattern": "www.shunkaixu.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     // /about serves about.html, and /about.html redirects to /about.
