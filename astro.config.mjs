@@ -14,6 +14,7 @@ export default defineConfig({
         'three/addons/environments/RoomEnvironment.js',
         'three/addons/loaders/GLTFLoader.js',
         'three/addons/utils/BufferGeometryUtils.js',
+        'three/addons/libs/meshopt_decoder.module.js',
       ],
     },
   },

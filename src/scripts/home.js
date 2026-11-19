@@ -19,8 +19,8 @@ const GLYPHS = {
 };
 
 async function boot() {
-  const [THREE, { RoomEnvironment }, { GLTFLoader }, BGU] = await Promise.all([
-    import('three'), import('three/addons/environments/RoomEnvironment.js'), import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/BufferGeometryUtils.js')
+  const [THREE, { RoomEnvironment }, { GLTFLoader }, BGU, { MeshoptDecoder }] = await Promise.all([
+    import('three'), import('three/addons/environments/RoomEnvironment.js'), import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/BufferGeometryUtils.js'), import('three/addons/libs/meshopt_decoder.module.js')
   ]);
   const hero = $('#hero'), canvas = $('#plot'), status = $('#status');
   const say = s => { if (status.textContent !== s) status.textContent = s; };
@@ -175,7 +175,7 @@ async function boot() {
     alu: new THREE.MeshPhysicalMaterial({ color: 0xCDD0D5, metalness: .9, roughness: .28 })
   };
   const bin = await (await fetch('/assets/ur5e.glb')).arrayBuffer();
-  const gltf = await new GLTFLoader().parseAsync(bin, '');
+  const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bin, '');
   gltf.scene.updateMatrixWorld(true);
   gltf.scene.traverse(o => {
     if (!o.isMesh) return;

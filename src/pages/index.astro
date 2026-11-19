@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="Shunkai Xu" page="home" description="Shunkai Xu plays the cello, builds iPhone apps and programs robots.">
+<link rel="preload" href="/assets/ur5e.glb" as="fetch" crossorigin="anonymous" slot="head">
 <style is:inline slot="head">
 .hero{position:relative;height:max(600px,calc(100svh - 56px));overflow:hidden}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:0}
