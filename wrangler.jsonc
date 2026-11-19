@@ -1,0 +1,11 @@
+// Cloudflare Workers settings: serve the built Astro site from ./dist as static files.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shunkaixu-com",
+  "compatibility_date": "2026-11-19",
+  "assets": {
+    "directory": "./dist",
+    // /about serves about.html, and /about.html redirects to /about.
+    "html_handling": "auto-trailing-slash"
+  }
+}
