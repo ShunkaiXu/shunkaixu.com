@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Music · Shunkai Xu" page="music">
+<style is:inline slot="head">
+.sec{margin-top:var(--s7)}
+.sec h2{font-size:clamp(29px,3.2vw,47px);margin-bottom:var(--s4)}
+.sec > p{max-width:62ch;color:var(--ink-2);margin:calc(-1 * var(--s2)) 0 var(--s4)}
+.spec > a .m{color:var(--blue)}
+.spec > div{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding:var(--s4) 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.spec .d em{font-style:normal;color:var(--muted)}
+</style>
+
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 3 / Music</span>
+    <h1>Music</h1>
+    <p>Cello is my main instrument, and I play piano too. I've played for more than five years: solo repertoire, chamber music in the summers, and a few international competitions along the way. I study with Aihao Zheng.</p>
+  </div>
+
+  <section class="sec" aria-labelledby="h-now">
+    <h2 id="h-now">Working on</h2>
+    <ul class="spec">
+      <li><span class="n">01</span><span class="t">Elgar</span><span class="d">Cello Concerto in E minor, Op. 85</span><span class="m">Concerto</span></li>
+      <li><span class="n">02</span><span class="t">Beethoven</span><span class="d">Cello Sonata No. 2 in G minor, Op. 5 No. 2</span><span class="m">Sonata</span></li>
+      <li><span class="n">03</span><span class="t">Paganini</span><span class="d">Variations on one string on a theme from Rossini's Moses, arr. Silva</span><span class="m">Showpiece</span></li>
+      <li><span class="n">04</span><span class="t">Arensky</span><span class="d">Piano Trio No. 1 in D minor, Op. 32. The next chamber piece I want to learn.</span><span class="m">Next</span></li>
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="h-summer">
+    <h2 id="h-summer">Summers</h2>
+    <p>Linked rows go to the festival's own page.</p>
+    <div class="spec">
+      <a href="https://musicatmenlo.org/institute-alumni/"><span class="n">2025</span><span class="t">Music@Menlo</span><span class="d">Young Performers Program, Chamber Music Institute, California</span><span class="m">Alumni list</span></a>
+      <a href="https://musicatmenlo.org/livestream/master-class-with-wu-han-piano-august-1-2025/"><span class="n">2025</span><span class="t">Master class with Wu Han</span><span class="d">Dvořák, Piano Trio No. 4 in E minor, "Dumky". <em>With Andrew Yin and Kalea Schunk.</em></span><span class="m">1 Aug</span></a>
+      <div><span class="n">2026</span><span class="t">Juilliard</span><span class="d">Summer programme in New York. Classes, master classes and studio classes with Clara Kim, Sterling Elliott and Zvi Plesser, among others.</span><span class="m">Summer</span></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-play">
+    <h2 id="h-play">Performances</h2>
+    <div class="spec">
+      <a href="https://musicatmenlo.org/livestream2025/koret-young-performers-concert-august-9-2025"><span class="n">2025</span><span class="t">Ravel</span><span class="d">String Quartet in F major, I. Koret Young Performers Concert, Music@Menlo</span><span class="m">9 Aug</span></a>
+      <a href="https://musicatmenlo.org/livestream/koret-young-performers-concert-august-2-2025/"><span class="n">2025</span><span class="t">Dvořák</span><span class="d">Piano Trio in E minor, Op. 90 "Dumky", I and II. Koret Young Performers Concert, Music@Menlo</span><span class="m">2 Aug</span></a>
+      <a href="https://musicatmenlo.org/livestream/koret-young-performers-concert-july-26-2025/"><span class="n">2025</span><span class="t">Dvořák</span><span class="d">Piano Quintet No. 2 in A major, Op. 81, IV. Koret Young Performers Concert, Music@Menlo</span><span class="m">26 Jul</span></a>
+      <div><span class="n">2024</span><span class="t">Popper</span><span class="d">Polonaise de concert, Op. 14. Église Sainte-Élisabeth-de-Hongrie, Paris</span><span class="m">11 May</span></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="h-comp">
+    <h2 id="h-comp">Competitions</h2>
+    <p>Mostly international competitions judged from video. Each row links to the published results.</p>
+    <div class="spec">
+      <a href="https://www.schubertcompetition.com/results24s4"><span class="n">2024</span><span class="t">Schubert International Music Competition</span><span class="d">Platinum Prize, Youth (11 to 13), and the Best Schubert Performance award. Season 4, UK</span><span class="m">Results</span></a>
+      <a href="https://claraschumanncompetition.com/prizeswinners/"><span class="n">2024</span><span class="t">International Clara Schumann Competition</span><span class="d">Second Prize, Cello Junior A</span><span class="m">Results</span></a>
+      <a href="https://avimc.org/2024-avimc-music-competition-winter-edition-winners/"><span class="n">2024</span><span class="t">American Virtuoso International Music Competition</span><span class="d">First Prize, Music in the Romantic Period, Young Artist B. Winter edition</span><span class="m">Results</span></a>
+      <a href="https://www.viennaclassicalmusic.org/2024-classical-music"><span class="n">2024</span><span class="t">Vienna Classical Music Academy</span><span class="d">Prize winner, International Classical Music Competition</span><span class="m">Results</span></a>
+      <a href="https://www.mahler.institute/en/category-32/"><span class="n">2024</span><span class="t">Mahler Institute competition</span><span class="d">Prize winner, Category 3, with Saint-Saëns, Cello Concerto No. 1 in A minor, Op. 33</span><span class="m">Results</span></a>
+      <a href="https://thebimcompetition.com/winners-2024/"><span class="n">2024</span><span class="t">Bellagrande International Music Competition</span><span class="d">Honorable mention</span><span class="m">Results</span></a>
+    </div>
+  </section>
+
+  <div class="rule"><span class="tick">§ 5</span></div>
+  <p class="mono" style="color:var(--muted)">Hear a few of the pieces I love played on the <a href="index.html#play">home page</a>.</p>
+</main>
+
+<script>
+import '../scripts/site.js';
+</script>
+</Layout>

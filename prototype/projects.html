@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="stylesheet" href="assets/site.css">
+
+<title>Projects · Shunkai Xu</title>
+<style>
+.tempo{padding-block:var(--s6)}
+.tempo .cols{align-items:end}
+.tempo h2{grid-column:1/8;font-size:clamp(29px,3.2vw,47px)}
+.tempo > .cols > p{grid-column:8/13;color:var(--ink-2)}
+.tbox{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--s6);align-items:center;margin-top:var(--s5);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding-block:var(--s5)}
+.dial{width:min(100%,400px);aspect-ratio:1;justify-self:center;touch-action:none;cursor:grab;outline:none}
+.dial:active{cursor:grabbing}
+.dial svg{display:block;width:100%;height:100%;overflow:visible}
+.dial .face{fill:var(--sheet);stroke:var(--ink);stroke-width:1}
+.dial .tk{stroke:var(--ink);stroke-width:1}
+.dial .tk.mn{stroke:var(--rule)}
+.dial .lb{font-family:var(--mono);font-size:11px;fill:var(--muted);text-anchor:middle;dominant-baseline:central}
+.dial .wedge{fill:var(--orange)}
+.dial .knob{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.dial .hub{fill:var(--ink)}
+.dial:focus-visible .face{stroke:var(--blue);stroke-width:2}
+.read{font-family:var(--mono);font-size:clamp(64px,9vw,132px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.read small{display:block;font-size:13px;letter-spacing:0;color:var(--muted);margin-bottom:var(--s3)}
+.tools{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4);align-items:center}
+.tools + .tools{margin-top:var(--s2)}
+.tlog{margin-top:var(--s5);color:var(--muted)}
+.tlog b{color:var(--ink);font-weight:500}
+@media (max-width:860px){.tempo h2,.tempo > .cols > p{grid-column:1/-1}.tempo > .cols > p{margin-top:var(--s3)}.tbox{grid-template-columns:1fr;gap:var(--s5)}}
+</style>
+</head>
+<body data-page="projects">
+<a class="vh" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Shunkai Xu, home"><span>Shunkai Xu</span><i aria-hidden="true"></i></a>
+    <nav class="nav" aria-label="Pages">
+      <a data-p="home" href="index.html">Home</a>
+      <a data-p="projects" href="projects.html">Projects</a>
+      <a data-p="music" href="music.html">Music</a>
+      <a data-p="posts" href="posts.html">Posts</a>
+      <a data-p="interests" href="interests.html">Interests</a>
+      <a data-p="about" href="about.html">About</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false">Menu</button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch light or dark"><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg></button>
+      <button class="sound" id="sound" type="button" aria-pressed="false"><span class="led" aria-hidden="true"></span><span id="sound-label">Sound off</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 2 / Projects</span>
+    <h1>Projects</h1>
+    <p>Two iPhone apps in progress, the code behind the robot arm on the home page, and a few smaller things.</p>
+  </div>
+  <ul class="spec">
+    <li><span class="n">01</span><span class="t">Kept</span><span class="d">A privacy-first journal for iPhone. SwiftUI, SwiftData, HealthKit, widgets, Apple Watch and App Intents.</span><span class="m">In development</span></li>
+    <li><span class="n">02</span><span class="t">Tempo</span><span class="d">A focus timer for iPhone. SwiftUI. There's a working web version below.</span><span class="m">In development</span></li>
+    <li><span class="n">03</span><span class="t">Drawing arm</span><span class="d">The UR5e on the home page: real joint geometry, inverse kinematics solved every frame, pen strokes planned with smooth acceleration.</span><span class="m">three.js</span></li>
+    <li><span class="n">04</span><span class="t">Card-counting trainer</span><span class="d">A web app for practising blackjack counts against the clock.</span><span class="m">Web</span></li>
+    <li><span class="n">05</span><span class="t">Hold'em simulator</span><span class="d">Plays out thousands of poker hands to estimate equity.</span><span class="m">Simulation</span></li>
+  </ul>
+
+  <div class="rule" data-chord="2"><span class="tick">§ 4</span></div>
+
+  <section class="tempo" id="tempo">
+    <div class="cols"><h2>Try Tempo</h2><p>The timer from my iPhone app, rebuilt for the web. Drag the dial to set the time, or pick a preset. It keeps running if you leave the page, and it counts what you finish today.</p></div>
+    <div class="tbox">
+      <div class="dial" id="dial" role="slider" tabindex="0" aria-label="Timer length in minutes" aria-valuemin="1" aria-valuemax="60" aria-valuenow="25"><svg viewBox="-200 -200 400 400" id="dsvg"></svg></div>
+      <div>
+        <div class="read" aria-live="off"><small id="tmode">Focus</small><span id="tread">25:00</span></div>
+        <div class="tools" role="group" aria-label="Presets">
+          <button class="btn on" type="button" data-pre="25" data-name="Focus" aria-pressed="true">Focus 25</button>
+          <button class="btn" type="button" data-pre="5" data-name="Break" aria-pressed="false">Break 5</button>
+          <button class="btn" type="button" data-pre="45" data-name="Cello practice" aria-pressed="false">Cello practice 45</button>
+        </div>
+        <div class="tools">
+          <button class="btn" type="button" id="tgo">Start</button>
+          <button class="btn" type="button" id="treset">Reset</button>
+        </div>
+        <p class="tlog mono" id="tlog" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="foot">
+  <div class="wrap mono">
+    <span>Shunkai Xu, Shanghai, 2026</span>
+    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="about.html">About</a></span>
+  </div>
+</footer>
+
+<script type="module" src="assets/site.js"></script>
+<script type="module" src="assets/projects.js"></script>
+</body>
+</html>

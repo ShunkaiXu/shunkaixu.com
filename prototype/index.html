@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="stylesheet" href="assets/site.css">
+
+<title>Shunkai Xu</title>
+<meta name="description" content="Shunkai Xu plays the cello, builds iPhone apps and programs robots.">
+<style>
+.hero{position:relative;height:max(600px,calc(100svh - 56px));overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:0}
+.hero .cap{position:absolute;left:var(--pad);right:var(--pad);bottom:var(--s5);display:flex;justify-content:space-between;align-items:end;gap:var(--s4);flex-wrap:wrap;pointer-events:none;z-index:var(--z-object)}
+.hero .cap > *{pointer-events:auto}
+.hero .fig{display:grid;gap:4px;padding:8px 11px;margin-left:-11px;background:color-mix(in srgb,var(--paper) 86%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.hero .fig b{font-weight:500;color:var(--ink)}
+.hero .fig span{color:var(--muted)}
+.hero .tools{display:flex;gap:var(--s2)}
+.hero .corner{position:absolute;top:var(--s4);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;color:var(--muted);pointer-events:none;z-index:var(--z-object)}.hero .corner .tools{pointer-events:auto}.hero .btn{background:color-mix(in srgb,var(--paper) 80%,transparent)}
+.hero .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+.hero.live .wait{display:none}
+.intro{padding-block:var(--s7) var(--s6)}
+.intro h2{grid-column:1/10;font-size:clamp(34px,4.3vw,62px);line-height:1.04}
+.intro h2 span{color:var(--muted)}
+.intro .side{grid-column:10/13;align-self:end;color:var(--ink-2);font-size:15.5px}
+.doors{margin-top:var(--s6)}
+.board{margin-top:var(--s5);border-top:1px solid var(--ink)}
+.board li{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;padding:var(--s3) 0;border-bottom:1px solid var(--rule)}
+.board .k{grid-column:1/4;color:var(--muted)}
+.board .cells{grid-column:4/-1;display:flex;flex-wrap:wrap;gap:3px}
+.cell{display:inline-grid;place-items:center;width:clamp(15px,2.1vw,30px);height:clamp(24px,3.1vw,44px);background:var(--cell);color:var(--cell-ink);font-family:var(--mono);font-size:clamp(12px,1.6vw,22px);border-radius:2px;position:relative;overflow:hidden}
+.cell::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.6);opacity:0;transition:opacity .3s}
+.cell.f::after{opacity:1;transition:none}
+.cell.f{animation:flap .11s linear}
+@keyframes flap{0%{transform:perspective(200px) rotateX(0)}50%{transform:perspective(200px) rotateX(-70deg)}100%{transform:perspective(200px) rotateX(0)}}
+.sect{padding-block:var(--s6)}
+.sect h2{font-size:clamp(29px,3.2vw,47px)}
+.play .cols{align-items:center}
+.play .pick{grid-column:1/8}
+.play h2{margin-top:var(--s3)}
+.play .side{color:var(--ink-2);font-size:16.5px;margin-top:var(--s4);max-width:36em}
+.pieces{margin-top:var(--s5)}
+.spec.pieces > li{display:block;padding:0;border:0}
+.pieces button{-webkit-appearance:none;appearance:none;display:grid;grid-template-columns:2.2em 1fr auto;gap:12px;align-items:baseline;width:100%;padding:var(--s3) 0;border:0;border-bottom:1px solid var(--rule);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.pieces button .n{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.pieces button .t{font-weight:600;letter-spacing:-.015em;font-size:19px}
+.pieces button .t small{display:block;font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0}
+.pieces button .m{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.pieces button:hover .t{color:var(--orange)}
+.pieces button[aria-pressed="true"] .n{color:var(--orange)}
+.pieces button[aria-pressed="true"] .n::before{content:"▶ "}
+.pieces button[disabled]{cursor:default;opacity:.55}
+.pieces button[disabled]:hover .t{color:inherit}
+.now{display:grid;grid-template-columns:1fr minmax(80px,30%) auto;gap:14px;align-items:center;margin-top:var(--s4);color:var(--muted);font-size:12.5px}
+.credit{margin-top:var(--s4);font-size:11.5px;color:var(--muted)}
+.now .bar{height:2px;background:var(--rule);position:relative}
+.now .bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--orange)}
+.play .stage{grid-column:8/13}
+.cellobox{position:relative;aspect-ratio:940/1660;width:min(100%,calc(84vh * 940 / 1660),480px);margin:0 0 0 auto}
+.cello-sway{position:absolute;inset:0;transform-origin:50% 92%;will-change:transform}
+.cellobox svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.intro{padding-block:var(--s8) var(--s7)}
+.intro .cols{position:relative}
+@media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro h2,.intro .side{grid-column:1/-1}.intro .side{margin-top:var(--s4)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
+.finale{position:relative;height:320vh}
+.finale .stage{position:sticky;top:0;height:100svh;overflow:hidden}
+.finale canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.finale .fcap{position:absolute;left:0;right:0;bottom:var(--s5);display:flex;justify-content:space-between;gap:var(--s4);color:var(--muted);pointer-events:none}
+.finale .fcap b{font-weight:500;color:var(--ink)}
+@media (max-width:640px){.finale{height:260vh}.finale .hint{display:none}}
+</style>
+</head>
+<body data-page="home">
+<a class="vh" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Shunkai Xu, home"><span>Shunkai Xu</span><i aria-hidden="true"></i></a>
+    <nav class="nav" aria-label="Pages">
+      <a data-p="home" href="index.html">Home</a>
+      <a data-p="projects" href="projects.html">Projects</a>
+      <a data-p="music" href="music.html">Music</a>
+      <a data-p="posts" href="posts.html">Posts</a>
+      <a data-p="interests" href="interests.html">Interests</a>
+      <a data-p="about" href="about.html">About</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false">Menu</button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch light or dark"><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg></button>
+      <button class="sound" id="sound" type="button" aria-pressed="false"><span class="led" aria-hidden="true"></span><span id="sound-label">Sound off</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="hero">
+    <h1 class="vh">Shunkai Xu</h1>
+    <canvas id="plot" aria-label="A UR5e robot arm breaks out of the page and writes the name Shunkai Xu. Drag on the page to draw with it." role="img"></canvas>
+    <div class="corner"><span></span><div class="tools"><button class="btn" id="redraw" type="button">Redraw name</button><button class="btn" id="clear" type="button">Clear my lines</button></div></div>
+    <div class="wait mono">Loading the drawing</div>
+    <div class="cap">
+      <div class="fig mono"><b id="status">Warming up</b><span>Drag near the name and the arm draws with you.</span></div>
+    </div>
+  </section>
+
+  <div data-dither class="dhost">
+  <section class="wrap intro">
+    <div class="cols">
+      <h2>I play the cello, build iPhone apps and program robots. <span>This site is where those three meet.</span></h2>
+      <p class="side">Every page has a few things you can touch. Sound is off until you switch it on in the corner.</p>
+    </div>
+    <div class="spec doors">
+      <a href="projects.html"><span class="n">01</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm, sorting you can hear.</span><span class="m">6 entries</span></a>
+      <a href="music.html"><span class="n">02</span><span class="t">Music</span><span class="d">Cello and piano, and what I'm working on now.</span><span class="m">Cello</span></a>
+      <a href="posts.html"><span class="n">03</span><span class="t">Posts</span><span class="d">Notes on building things, and on practice.</span><span class="m">Soon</span></a>
+    </div>
+  </section>
+  </div>
+
+  <div class="wrap"><div class="rule" data-chord="0"><span class="tick">§ 1</span></div></div>
+
+  <section class="wrap sect play" id="play">
+    <div class="cols">
+      <div class="pick">
+        <span class="mono label">Fig. 2</span>
+        <h2>Play me something</h2>
+        <p class="side">Pick a piece and the cello plays it: the bow changes direction, the left hand shifts, and only the stopped part of the string vibrates.</p>
+        <ol class="spec pieces" id="pieces"></ol>
+        <div class="now mono" id="nowplaying" aria-live="polite"><span id="np-title">Nothing playing</span><span class="bar"><i id="np-bar"></i></span><span id="np-time">0:00</span></div>
+        <p class="credit mono">Bach recording by Chris, public domain, via Wikimedia Commons. Other pieces: cello samples by flcellogrl on Freesound, CC BY 3.0; scores from the Mutopia Project, public domain.</p>
+      </div>
+      <div class="stage"><div id="cello" class="cellobox"></div></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule" data-chord="2"><span class="tick">§ 2</span></div></div>
+
+  <section class="wrap sect">
+    <h2>Right now</h2>
+    <ol class="board">
+      <li><span class="k mono">Practising</span><span class="cells" data-n="24" data-text="Elgar concerto op. 85"></span></li>
+      <li><span class="k mono">Building</span><span class="cells" data-n="24" data-text="Kept, a journal app"></span></li>
+      <li><span class="k mono">Studying</span><span class="cells" data-n="24" data-text="Maths, physics, CS, econ"></span></li>
+      <li><span class="k mono">Making</span><span class="cells" data-n="24" data-text="This website"></span></li>
+    </ol>
+  </section>
+
+  <div class="wrap"><div class="rule" data-chord="1"><span class="tick">§ 3</span></div></div>
+
+  <section class="finale" id="finale" aria-label="Closing: gold shards form the name Shunkai Xu">
+    <div class="stage">
+      <canvas aria-hidden="true"></canvas>
+      <div class="fcap wrap mono"><span>Fig. 4&nbsp;&nbsp;<b id="finale-cap">Glass</b></span><span class="hint">Keep scrolling. Move through it to scatter the gold.</span></div>
+    </div>
+    <h2 class="vh">Shunkai Xu</h2>
+  </section>
+</main>
+<footer class="foot">
+  <div class="wrap mono">
+    <span>Shunkai Xu, Shanghai, 2026</span>
+    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="about.html">About</a></span>
+  </div>
+</footer>
+
+<script type="importmap">{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module" src="assets/site.js"></script>
+<script type="module" src="assets/home.js"></script>
+<script type="module" src="assets/player.js"></script>
+<script type="module" src="assets/dither.js"></script>
+<script type="module" src="assets/finale.js"></script>
+</body>
+</html>

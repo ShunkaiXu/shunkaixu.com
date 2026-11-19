@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="stylesheet" href="assets/site.css">
+
+<title>Interests · Shunkai Xu</title>
+<style>
+.econ{padding-block:var(--s6)}
+.econ .cols{align-items:end}
+.econ h2{grid-column:1/8;font-size:clamp(29px,3.2vw,47px)}
+.econ p{grid-column:8/13;color:var(--ink-2)}
+.chart{margin-top:var(--s5);display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:start}
+.chart svg{grid-column:1/9;width:100%;height:auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.chart dl{grid-column:9/13;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;border-top:1px solid var(--ink);padding-top:var(--s4)}
+.chart dt{color:var(--muted)}
+.chart dd{font-variant-numeric:tabular-nums;text-align:right}
+.chart .grab{cursor:ns-resize}
+.chart svg{color:var(--ink)}
+.chart .ax{stroke:var(--ink);stroke-width:1}
+.chart .grid{stroke:rgba(31,79,216,.12);stroke-width:1}
+.chart text{font-family:var(--mono);font-size:12px;fill:var(--muted)}
+@media (max-width:860px){.econ h2,.econ p,.chart svg,.chart dl{grid-column:1/-1}.econ p{margin-top:var(--s3)}.chart dl{margin-top:var(--s4)}}
+</style>
+</head>
+<body data-page="interests">
+<a class="vh" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Shunkai Xu, home"><span>Shunkai Xu</span><i aria-hidden="true"></i></a>
+    <nav class="nav" aria-label="Pages">
+      <a data-p="home" href="index.html">Home</a>
+      <a data-p="projects" href="projects.html">Projects</a>
+      <a data-p="music" href="music.html">Music</a>
+      <a data-p="posts" href="posts.html">Posts</a>
+      <a data-p="interests" href="interests.html">Interests</a>
+      <a data-p="about" href="about.html">About</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false">Menu</button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch light or dark"><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg></button>
+      <button class="sound" id="sound" type="button" aria-pressed="false"><span class="led" aria-hidden="true"></span><span id="sound-label">Sound off</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 5 / Interests</span>
+    <h1>Interests</h1>
+    <p>What I follow when I'm not practising or coding. Most of it comes back to systems: cars, teams and markets.</p>
+  </div>
+  <ul class="spec">
+    <li><span class="n">01</span><span class="t">Computational economics</span><span class="d">What I want to study. Markets as systems you can model, simulate and test. Try the chart below.</span><span class="m">Next step</span></li>
+    <li><span class="n">02</span><span class="t">Formula 1</span><span class="d">Engineering at the limit, decided by strategy. Shanghai's circuit is my home race.</span><span class="m">Follow</span></li>
+    <li><span class="n">03</span><span class="t">Football</span><span class="d">Ninety minutes of tactics, with no pause button.</span><span class="m">Follow</span></li>
+    <li><span class="n">04</span><span class="t">Algorithms</span><span class="d">Small rules that produce surprising order. See Sorting, out loud on Projects.</span><span class="m"><a href="projects.html">Projects</a></span></li>
+  </ul>
+
+  <div class="rule" data-chord="4"><span class="tick">§ 6</span></div>
+
+  <section class="econ">
+    <div class="cols"><h2>Find the price</h2><p>Drag either line up or down. The market settles where supply meets demand, and the shaded areas show who gains: buyers in blue, sellers in orange.</p></div>
+    <div class="chart">
+      <svg id="sd" viewBox="0 0 640 400" aria-label="A supply and demand chart. Drag the lines to move them."></svg>
+      <dl>
+        <dt class="mono">Price</dt><dd class="mono" id="pp">0</dd>
+        <dt class="mono">Quantity</dt><dd class="mono" id="qq">0</dd>
+        <dt class="mono">Buyer surplus</dt><dd class="mono" id="cs">0</dd>
+        <dt class="mono">Seller surplus</dt><dd class="mono" id="ps">0</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+<footer class="foot">
+  <div class="wrap mono">
+    <span>Shunkai Xu, Shanghai, 2026</span>
+    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="about.html">About</a></span>
+  </div>
+</footer>
+
+<script type="module" src="assets/site.js"></script>
+<script type="module" src="assets/interests.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="stylesheet" href="assets/site.css">
+
+<title>Posts · Shunkai Xu</title>
+<style>
+.tags{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s4)}
+.spec li[hidden]{display:none}
+</style>
+</head>
+<body data-page="posts">
+<a class="vh" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Shunkai Xu, home"><span>Shunkai Xu</span><i aria-hidden="true"></i></a>
+    <nav class="nav" aria-label="Pages">
+      <a data-p="home" href="index.html">Home</a>
+      <a data-p="projects" href="projects.html">Projects</a>
+      <a data-p="music" href="music.html">Music</a>
+      <a data-p="posts" href="posts.html">Posts</a>
+      <a data-p="interests" href="interests.html">Interests</a>
+      <a data-p="about" href="about.html">About</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false">Menu</button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch light or dark"><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg></button>
+      <button class="sound" id="sound" type="button" aria-pressed="false"><span class="led" aria-hidden="true"></span><span id="sound-label">Sound off</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 4 / Posts</span>
+    <h1>Posts</h1>
+    <p>Notes on building things and on practice. The first ones are being written now.</p>
+  </div>
+  <div class="tags" role="group" aria-label="Filter by tag">
+    <button class="btn on" type="button" data-tag="all" aria-pressed="true">All</button>
+    <button class="btn" type="button" data-tag="robots" aria-pressed="false">Robots</button>
+    <button class="btn" type="button" data-tag="cello" aria-pressed="false">Cello</button>
+    <button class="btn" type="button" data-tag="apps" aria-pressed="false">Apps</button>
+    <button class="btn" type="button" data-tag="code" aria-pressed="false">Code</button>
+  </div>
+  <ul class="spec" id="list">
+    <li data-tags="robots code"><span class="n">Draft</span><span class="t">Teaching a robot arm to write</span><span class="d">Inverse kinematics, pen speed, and why the letters wobbled at first.</span><span class="m">Robots, code</span></li>
+    <li data-tags="cello"><span class="n">Draft</span><span class="t">Practising Elgar</span><span class="d">What the first movement asks of the left hand.</span><span class="m">Cello</span></li>
+    <li data-tags="apps code"><span class="n">Draft</span><span class="t">Building Kept</span><span class="d">Designing a journal app that never sends your data anywhere.</span><span class="m">Apps, code</span></li>
+    <li data-tags="cello code"><span class="n">Draft</span><span class="t">Sound on a website</span><span class="d">How to make UI sound that nobody wants to turn off.</span><span class="m">Cello, code</span></li>
+  </ul>
+</main>
+<footer class="foot">
+  <div class="wrap mono">
+    <span>Shunkai Xu, Shanghai, 2026</span>
+    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="about.html">About</a></span>
+  </div>
+</footer>
+
+<script type="module" src="assets/site.js"></script>
+<script type="module">
+const bs = [...document.querySelectorAll('[data-tag]')], items = [...document.querySelectorAll('#list li')];
+bs.forEach(b => b.addEventListener('click', () => {
+  const t = b.dataset.tag; bs.forEach(x => { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  items.forEach(li => li.hidden = t !== 'all' && !li.dataset.tags.split(' ').includes(t));
+}));
+</script>
+</body>
+</html>

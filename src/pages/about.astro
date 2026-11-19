@@ -1,0 +1,48 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="About · Shunkai Xu" page="about">
+<style is:inline slot="head">
+.bio{grid-column:1/8;font-size:clamp(19px,1.7vw,24px);line-height:1.42}
+.bio p + p{margin-top:var(--s4)}
+.facts{grid-column:9/13;display:grid;grid-template-columns:auto 1fr;gap:12px 22px;border-top:1px solid var(--ink);padding-top:var(--s4);align-self:start}
+.facts dt{color:var(--muted)}
+.contact{margin-top:var(--s7)}
+.contact h2{font-size:clamp(29px,3.2vw,47px);margin-bottom:var(--s4)}
+@media (max-width:860px){.bio,.facts{grid-column:1/-1}.facts{margin-top:var(--s5)}}
+</style>
+
+<div data-dither>
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 6 / About</span>
+    <h1>About</h1>
+  </div>
+  <div class="cols">
+    <div class="bio">
+      <p>I'm Shunkai, a high school student in Shanghai. I play the cello, build iPhone apps in Swift, and write the code that makes robots move.</p>
+      <p>I like work that has to be exact and still feel alive: a phrase in a concerto, a smooth arm trajectory, an app that gets out of your way. Next I want to study computational economics, where code and markets meet.</p>
+    </div>
+    <dl class="facts mono">
+      <dt>Based in</dt><dd>Shanghai</dd>
+      <dt>Studying</dt><dd>IB: Maths, Physics, CS, Economics (HL)</dd>
+      <dt>Plays</dt><dd>Cello, piano</dd>
+      <dt>Builds</dt><dd>iPhone apps, robot code</dd>
+    </dl>
+  </div>
+  <div class="rule" data-chord="0"><span class="tick">§ 7</span></div>
+  <section class="contact">
+    <h2>Say hello</h2>
+    <div class="spec">
+      <a href="mailto:shunkai_xu@163.com"><span class="n">@</span><span class="t">Email</span><span class="d">shunkai_xu@163.com</span><span class="m">Best way to reach me</span></a>
+      <a href="https://github.com/ShunkaiXu"><span class="n">gh</span><span class="t">GitHub</span><span class="d">Code for the apps and this site</span><span class="m">@ShunkaiXu</span></a>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+import '../scripts/site.js';
+import '../scripts/dither.js';
+</script>
+</Layout>

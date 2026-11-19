@@ -1,0 +1,51 @@
+---
+interface Props {
+  title: string;
+  page: string;
+  description?: string;
+}
+const { title, page, description } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script is:inline>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="stylesheet" href="/assets/site.css">
+
+<title>{title}</title>
+{description && <meta name="description" content={description}>}
+<slot name="head" />
+</head>
+<body data-page={page}>
+<a class="vh" href="#main">Skip to content</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Shunkai Xu, home"><span>Shunkai Xu</span><i aria-hidden="true"></i></a>
+    <nav class="nav" aria-label="Pages">
+      <a data-p="home" href="/">Home</a>
+      <a data-p="projects" href="/projects">Projects</a>
+      <a data-p="music" href="/music">Music</a>
+      <a data-p="posts" href="/posts">Posts</a>
+      <a data-p="interests" href="/interests">Interests</a>
+      <a data-p="about" href="/about">About</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false">Menu</button>
+    <div class="right">
+      <button class="theme" id="theme" type="button" aria-label="Switch light or dark"><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7z"/></svg></button>
+      <button class="sound" id="sound" type="button" aria-pressed="false"><span class="led" aria-hidden="true"></span><span id="sound-label">Sound off</span></button>
+    </div>
+  </div>
+</header>
+
+<slot />
+<footer class="foot">
+  <div class="wrap mono">
+    <span>Shunkai Xu, Shanghai, 2026</span>
+    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="/about">About</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
