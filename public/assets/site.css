@@ -130,9 +130,9 @@ button{font:inherit;color:inherit}
 
 /* dithered field bleeding in from the left */
 [data-dither]{position:relative;isolation:isolate}
-.dither{position:absolute;left:0;top:0;bottom:0;width:min(15vw,220px);height:100%;z-index:-1;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
-[data-dither] > .wrap,[data-dither] > main{padding-left:calc(min(11vw,160px) + var(--s4))}
-@media (max-width:860px){.dither{width:10vw}[data-dither] > .wrap,[data-dither] > main{padding-left:calc(7vw + var(--s3))}}
+.dither{position:absolute;left:0;top:0;bottom:0;width:min(22vw,340px);height:100%;z-index:-1;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
+[data-dither] > .wrap,[data-dither] > main{padding-left:calc(min(15vw,235px) + var(--s4))}
+@media (max-width:860px){.dither{width:14vw}[data-dither] > .wrap,[data-dither] > main{padding-left:calc(9vw + var(--s3))}}
 
 /* section divider: a string pinned between a nut and a bridge */
 .rule{display:flex;align-items:center;gap:14px;height:23px;margin-block:var(--s6);cursor:pointer;touch-action:manipulation;outline:0;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.02em}

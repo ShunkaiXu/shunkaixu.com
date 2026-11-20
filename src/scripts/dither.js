@@ -11,13 +11,13 @@ const sm = t => t * t * (3 - 2 * t);
 function noise(x, y) { const xi = Math.floor(x), yi = Math.floor(y), xf = sm(x - xi), yf = sm(y - yi); const a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1); return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf; }
 const fbm = (x, y) => noise(x, y) * .55 + noise(x * 2.1, y * 2.1) * .3 + noise(x * 4.3, y * 4.3) * .15;
 
-/* The cursor plays with it: outside the field the edge reaches toward you, inside it the pointer
-   stirs a hole that leaves a fading wake, and a click or tap sends out a ripple. */
+/* The cursor plays with it: when it comes near, the edge stretches out toward it and follows it,
+   then relaxes back when it leaves. */
 for (const host of $$('[data-dither]')) {
   const cv = document.createElement('canvas'); cv.className = 'dither'; cv.setAttribute('aria-hidden', 'true'); host.prepend(cv);
   const x = cv.getContext('2d'); let W = 0, H = 0, cols = 0, rows = 0, img = null, vis = false;
-  const CELL = 6;
-  const size = () => { W = cv.clientWidth; H = cv.clientHeight; cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL); cv.width = cols; cv.height = rows; img = x.createImageData(cols, rows); };
+  const CELL = 3, Q = CELL / 6, SIG = 90 / CELL;   // 3 px cells; Q keeps the noise the same size on screen; SIG: bulge height (px / cell)
+  const size = () => { W = cv.clientWidth; H = cv.clientHeight; cols = Math.max(1, Math.ceil(W / CELL)); rows = Math.max(1, Math.ceil(H / CELL)); cv.width = cols; cv.height = rows; img = x.createImageData(cols, rows); };
   size(); new ResizeObserver(size).observe(cv);
   new IntersectionObserver(es => { vis = es[0].isIntersecting; }).observe(host);
   const seed = Math.random() * 100;
@@ -28,7 +28,7 @@ for (const host of $$('[data-dither]')) {
   if (!reduce) {
     addEventListener('pointermove', e => {
       const [cx, cy, b] = toCells(e);
-      P.near = e.clientY > b.top && e.clientY < b.bottom && e.clientX < b.right + 140 ? 1 : 0;
+      P.near = e.clientY > b.top && e.clientY < b.bottom && e.clientX < b.right + 420 ? 1 : 0;
       if (P.sx < -50) { P.sx = cx; P.sy = cy; }
       P.x = cx; P.y = cy;
     }, { passive: true });
@@ -52,17 +52,17 @@ for (const host of $$('[data-dither]')) {
     const sc = scrollY * .0012, act = P.act, px = P.sx, py = P.sy;
     for (let j = 0; j < rows; j++) {
       const yy = j / rows;
-      let edge = (.5 + .26 * (fbm(yy * 2.4 + seed, t * .05 + sc) - .5) * 2 + .08 * Math.sin(yy * 5 + t * .25 + sc * 2)) * cols;
+      let edge = (.44 + .22 * (fbm(yy * 2.4 + seed, t * .05 + sc) - .5) * 2 + .08 * Math.sin(yy * 5 + t * .25 + sc * 2)) * cols;
       if (act > .01) {   // reach for the cursor: a soft bulge centred on its row, weaker the further away it is
-        const reach = Math.max(0, Math.min(px, cols * 1.02) - edge), gy = Math.exp(-((j - py) ** 2) / (2 * 16 * 16));
-        edge += act * gy * reach * .14 / (1 + (reach / 40) ** 2);
+        const reach = Math.max(0, Math.min(px, cols * .97) - edge), gy = Math.exp(-((j - py) ** 2) / (2 * SIG * SIG));
+        edge += act * gy * reach * .85;
       }
       // fade in and out at the section's top and bottom so the field is a soft shape, never a cut-off block
       const ev = Math.min(1, yy / .3, (1 - yy) / .3), env = ev <= 0 ? 0 : ev * ev * (3 - 2 * ev);
       edge *= .15 + .85 * env;
       for (let i = 0; i < cols; i++) {
         let v = (edge - i) / (.32 * cols) + .5 - (1 - env) * .95;
-        v -= .32 * (fbm(i * .045 + seed, j * .03 + t * .08) - .45);
+        v -= .32 * (fbm(i * .045 * Q + seed, j * .03 * Q + t * .08) - .45);
         v = Math.max(0, Math.min(1, v));
         let lv = Math.floor(v * 4 + BAYER[(j & 7) * 8 + (i & 7)]); lv = lv < 0 ? 0 : lv > 4 ? 4 : lv;
         const o = (j * cols + i) * 4, c = pal[lv];

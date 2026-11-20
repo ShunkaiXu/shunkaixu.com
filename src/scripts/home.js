@@ -19,8 +19,23 @@ const GLYPHS = {
 };
 
 async function boot() {
+  // progress for the loading screen: the code (three.js and its parts), then the robot model byte by byte
+  const LD = window.__loader;
+  let codeK = 0, glbK = 0;
+  const report = () => LD && LD.set(.06 + .38 * codeK + .48 * glbK);
+  const track = (pr, w) => pr.then(m => { codeK += w; report(); return m; });
+  const glbP = (async () => {
+    const res = await fetch('/assets/ur5e.glb');
+    if (!res.body || !res.body.getReader) return res.arrayBuffer();
+    const total = +res.headers.get('content-length') || 369032, reader = res.body.getReader(), parts = [];
+    let got = 0;
+    for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; glbK = Math.min(1, got / total); report(); }
+    const buf = new Uint8Array(got); let o = 0; for (const c of parts) { buf.set(c, o); o += c.length; }
+    return buf.buffer;
+  })();
+  report();
   const [THREE, { RoomEnvironment }, { GLTFLoader }, BGU, { MeshoptDecoder }] = await Promise.all([
-    import('three'), import('three/addons/environments/RoomEnvironment.js'), import('three/addons/loaders/GLTFLoader.js'), import('three/addons/utils/BufferGeometryUtils.js'), import('three/addons/libs/meshopt_decoder.module.js')
+    track(import('three'), .7), track(import('three/addons/environments/RoomEnvironment.js'), .05), track(import('three/addons/loaders/GLTFLoader.js'), .15), track(import('three/addons/utils/BufferGeometryUtils.js'), .05), track(import('three/addons/libs/meshopt_decoder.module.js'), .05)
   ]);
   const hero = $('#hero'), canvas = $('#plot'), status = $('#status');
   const say = s => { if (status.textContent !== s) status.textContent = s; };
@@ -129,7 +144,7 @@ async function boot() {
   const toPx = (x, z) => [(x + SW / 2) * PXM, (z - (SZ - SD / 2)) * PXM];
   try { await document.fonts.load('500 30px "Geist Mono"'); } catch (e) {}
   // letter layout
-  const H = .088, GAP = .3 * H, word = 'SHUNKAI XU';
+  const H = .112, GAP = .3 * H, word = 'SHUNKAI XU';
   let width = 0; for (const ch of word) width += GLYPHS[ch].w * H + GAP; width -= GAP;
   const X0 = -width / 2, ZB = .2;
   const letters = []; let cx = X0;
@@ -149,8 +164,6 @@ async function boot() {
     x.font = '500 28px "Geist Mono", monospace'; x.textAlign = 'center'; x.textBaseline = 'bottom';
     x.fillText(`${Math.round(width * 1000)} mm`, (ax + bx) / 2, ay - 10);
     const [, by] = toPx(0, ZB); x.setLineDash([12, 10]); x.globalAlpha = .55; x.beginPath(); x.moveTo(ax - 40, by); x.lineTo(bx + 40, by); x.stroke(); x.setLineDash([]); x.globalAlpha = 1;
-    x.fillStyle = c.muted; x.textAlign = 'left'; x.textBaseline = 'top'; x.font = '500 24px "Geist Mono", monospace';
-    x.fillText('FIG. 1   SHUNKAI XU, WRITTEN BY A UR5e   1:1', ax, by + 34);
   }
   drawBase();
   const outX = out.getContext('2d'), tint = mk(), tX = tint.getContext('2d');
@@ -174,7 +187,7 @@ async function boot() {
     black: new THREE.MeshPhysicalMaterial({ color: 0x1B1C1E, roughness: .62 }),
     alu: new THREE.MeshPhysicalMaterial({ color: 0xCDD0D5, metalness: .9, roughness: .28 })
   };
-  const bin = await (await fetch('/assets/ur5e.glb')).arrayBuffer();
+  const bin = await glbP;
   const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bin, '');
   gltf.scene.updateMatrixWorld(true);
   gltf.scene.traverse(o => {
@@ -235,7 +248,7 @@ async function boot() {
   let lastInk = null, inkMode = 'name';
   const ctxName = inkName.getContext('2d'), ctxYou = inkYou.getContext('2d');
   for (const c of [ctxName, ctxYou]) { c.lineCap = 'round'; c.lineJoin = 'round'; }
-  ctxName.strokeStyle = '#121212'; ctxName.lineWidth = 4.2; ctxYou.strokeStyle = '#FF5A1F'; ctxYou.lineWidth = 4.2;
+  ctxName.strokeStyle = '#121212'; ctxName.lineWidth = 5.3; ctxYou.strokeStyle = '#FF5A1F'; ctxYou.lineWidth = 4.2;
   function ink(tip) {
     const down = tip.y < .0022;
     if (!down) { lastInk = null; return; }
@@ -254,7 +267,7 @@ async function boot() {
       const g = new THREE.Group(); g.userData = { i, y: 0, target: .012, delay: i * .06, hop: 0, at: 0 };
       for (const st of L.strokes) {
         const path = new THREE.CurvePath(); for (let k = 1; k < st.length; k++) path.add(new THREE.LineCurve3(st[k - 1], st[k]));
-        const m = new THREE.Mesh(new THREE.TubeGeometry(path, Math.max(8, st.length * 3), .0021, 10, false), inkMat); m.castShadow = true; g.add(m);
+        const m = new THREE.Mesh(new THREE.TubeGeometry(path, Math.max(8, st.length * 3), .0027, 10, false), inkMat); m.castShadow = true; g.add(m);
         for (const end of [st[0], st[st.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(.0021, 10, 8), inkMat); cap.position.copy(end); cap.castShadow = true; g.add(cap); }
       }
       const hit = new THREE.Mesh(new THREE.BoxGeometry(Math.max(L.w, .02) + .012, .02, H + .012), new THREE.MeshBasicMaterial({ visible: false }));
@@ -322,6 +335,11 @@ async function boot() {
   let visible = true; new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(hero);
   const smoothTarget = new THREE.Vector3().copy(goal);
   let last = performance.now();
+  // build the shaders now rather than on the first visible frame, then let the loading screen go;
+  // the intro waits for it to fade so the wall breaks in front of the visitor
+  try { renderer.compile(scene, camera); } catch (e) {}
+  let waiting = !!LD;
+  if (LD) { LD.done(); LD.whenGone().then(() => { waiting = false; last = performance.now(); }); }
   hero.classList.add('live');
   window.__home = { goal, robot, letters, world: () => world, intro: () => intro, shards: () => shards.filter(x => x.m.visible).length, setIntro: t => { intro = t; }, wy: () => world.position.y, plan: () => plan.length, done: () => nameDone };
   function frame(now) {
@@ -332,7 +350,7 @@ async function boot() {
       const dt = dt0;
       stepShards(dt);
       if (intro >= 0) {
-        if (!window.__freeze) intro += dt;
+        if (!window.__freeze && !waiting) intro += dt;
         const CR = .85;                                     // cracks spread, then it breaks
         crackGeo.setDrawRange(0, Math.floor(clamp(intro / CR, 0, 1) ** .7 * edges.length) * 2);
         crackLines.position.y = intro < CR ? (Math.random() - .5) * .003 * (intro / CR) : 0; if (intro < CR) shake = Math.max(shake, .25 * (intro / CR));
@@ -396,4 +414,4 @@ function flaps() {
   });
 }
 flaps();
-boot().catch(e => { console.error(e); $('#status').textContent = 'The 3D drawing could not load here.'; });
+boot().catch(e => { console.error(e); $('#status').textContent = 'The 3D drawing could not load here.'; if (window.__loader) window.__loader.done(); });

@@ -65,19 +65,19 @@ function init() {
   el('path', { d: body, fill: 'none', stroke: '#4A1A08', 'stroke-width': 1.6 }, root);
   // f-holes: a tapered S-shaped stem with a small upper eye (inner) and a larger lower eye (outer),
   // pointed wings at both ends and the two nicks level with the bridge feet
+  // The stem is one shape: narrowest at the nicks, widening at each end into a pointed wing
+  // (upper wing beside the upper eye on the outside, lower wing beside the lower eye on the inside).
   for (const sd of [1, -1]) {
-    const X = x => sd * x, FH = '#160803';
-    const c = [[44, 340], [44.5, 360], [49, 384], [55.5, 405], [61, 428], [64.5, 450], [65, 466]];
-    const wAt = t => 1.4 + 3.2 * Math.sin(Math.PI * t);
-    const side = k => c.map((p, i) => { const q = c[Math.min(c.length - 1, i + 1)], o = c[Math.max(0, i - 1)], dx = q[0] - o[0], dy = q[1] - o[1], L = Math.hypot(dx, dy) || 1, w = wAt(i / (c.length - 1)) * k; return [X(p[0] - dy / L * w), p[1] + dx / L * w]; });
-    const A = side(1), Bk = side(-1).reverse();
-    el('path', { d: M(A[0]) + cr(A) + 'L' + f(Bk[0][0]) + ' ' + f(Bk[0][1]) + cr(Bk) + 'Z', fill: FH }, root);
-    el('circle', { cx: X(43), cy: 336, r: 5.6, fill: FH }, root);
-    el('circle', { cx: X(67), cy: 471, r: 7.2, fill: FH }, root);
-    el('path', { d: `M${X(42)} 343L${X(53)} 327L${X(47)} 345Z`, fill: FH }, root);          // upper wing
-    el('path', { d: `M${X(67)} 462L${X(57)} 486L${X(63)} 461Z`, fill: FH }, root);          // lower wing
-    el('path', { d: `M${X(51.2)} 404L${X(47.6)} 406.5L${X(51.6)} 407.5Z M${X(60)} 404L${X(63.6)} 405.5L${X(59.8)} 407.5Z`, fill: FH }, root);   // nicks
-    el('path', { d: M(A[1]) + cr(A.slice(1, -1)), fill: 'none', stroke: '#E7B57A', 'stroke-width': .9, opacity: .35, transform: `translate(${-sd * 1.2} -1)` }, root);    // light catching the cut edge
+    const X = x => sd * x, P = pts => pts.map(([x, y]) => [X(x), y]), FH = '#160803';
+    const IN = P([[37.6, 339], [39.8, 354], [43, 370], [48.4, 388], [53.6, 404.5], [58.6, 421], [61.6, 436], [62, 450], [59.5, 466], [53.5, 489]]);   // inner edge, down to the lower wing tip
+    const LW = P([[53.5, 489], [60, 481], [66, 475]]);                                                                     // back up the wing into the lower eye
+    const OUT = P([[73, 464], [71.6, 450], [69.4, 436], [65.8, 421], [60.2, 404.5], [54.6, 388], [50.4, 372], [49.4, 358], [51, 344], [57.5, 322]]);       // outer edge, up to the upper wing tip
+    const UW = P([[57.5, 322], [49, 331], [44, 331.5]]);                                                                   // back down the wing into the upper eye
+    el('path', { d: M(IN[0]) + cr(IN) + cr(LW) + 'L' + f(OUT[0][0]) + ' ' + f(OUT[0][1]) + cr(OUT) + cr(UW) + 'Z', fill: FH }, root);
+    el('circle', { cx: X(40.5), cy: 335, r: 5.3, fill: FH }, root);    // upper eye, smaller
+    el('circle', { cx: X(70), cy: 469.5, r: 6.9, fill: FH }, root);    // lower eye, larger
+    el('path', { d: `M${X(53.8)} 402.2L${X(49.6)} 405L${X(54.2)} 407.4Z M${X(60)} 402.2L${X(64)} 404.6L${X(60.4)} 407.4Z`, fill: FH }, root);   // nicks, level with the bridge feet
+    el('path', { d: M(OUT[1]) + cr(OUT.slice(1, -3)), fill: 'none', stroke: '#E7B57A', 'stroke-width': .9, opacity: .35, transform: `translate(${sd * 1.1} 0)` }, root);   // light catching the cut edge
   }
   // tailpiece with four fine tuners, saddle
   el('path', { d: M([-32, 523]) + cr([[-32, 523], [0, 517], [32, 523]]) + `L17 738` + cr([[17, 738], [0, 743], [-17, 738]]) + 'Z', fill: 'url(#ebony)' }, root);
@@ -163,10 +163,17 @@ function init() {
       else { b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', () => toggle(p, b)); p.btn = b; b.querySelector('.m').textContent = fmt(plan(p).total); }
     });
   })();
+  // Download the sample bytes ahead of time (when the player scrolls near), decode them on the first play.
+  let sampleBytes = null;
+  const fetchSamples = () => sampleBytes || (sampleBytes = (async () => {
+    const raw = await (await fetch('/assets/cello-samples.json')).json();
+    return Promise.all(raw.map(async r => ({ ...r, bin: await (await fetch('/assets/' + r.file)).arrayBuffer() })));
+  })());
+  new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); fetchSamples(); } }, { rootMargin: '300px 0px' }).observe(box);
   async function loadSamples(ac) {
     if (SAMPLES) return SAMPLES;
-    const raw = await (await fetch('/assets/cello-samples.json')).json();
-    SAMPLES = await Promise.all(raw.map(async r => { const bin = await (await fetch('/assets/' + r.file)).arrayBuffer(); return { midi: r.midi, tune: r.tune, buf: await ac.decodeAudioData(bin) }; }));
+    const raw = await fetchSamples();
+    SAMPLES = await Promise.all(raw.map(async r => ({ midi: r.midi, tune: r.tune, buf: await ac.decodeAudioData(r.bin.slice(0)) })));
     return SAMPLES;
   }
 
@@ -285,14 +292,14 @@ function init() {
     if (playing) return;
     const r = Sound.raw(); if (!r) return;
     $('#np-title').textContent = 'Tuning up';
-    if (p.audio) {
-      if (!p.buf) { const res = await fetch(p.audio); p.buf = await r.ac.decodeAudioData(await res.arrayBuffer()); }
+    if (p.audio) {   // a real recording: stream it, so it starts as soon as the first second has arrived
+      if (!p.el) { p.el = new Audio(p.audio); p.el.preload = 'auto'; p.node = r.ac.createMediaElementSource(p.el); }
       if (r.ac.state !== 'running') { try { await r.ac.resume(); } catch (e) {} }
-      if (playing || !Sound.on) return;
-      const out = r.ac.createGain(); out.gain.value = 1; out.connect(r.master);
-      const src = r.ac.createBufferSource(); src.buffer = p.buf; src.connect(out);
-      const P = plan(p), t0 = r.ac.currentTime + .15; src.start(t0);
-      playing = { p, P, t0, ac: r.ac, out, nodes: [src], btn, idx: 0 };
+      const out = r.ac.createGain(); out.gain.value = 1; out.connect(r.master); p.node.connect(out);
+      p.el.currentTime = 0;
+      try { await p.el.play(); } catch (e) { p.node.disconnect(out); out.disconnect(); $('#np-title').textContent = 'Nothing playing'; return; }
+      if (playing || !Sound.on) { p.el.pause(); p.node.disconnect(out); out.disconnect(); return; }
+      playing = { p, P: plan(p), t0: 0, ac: r.ac, out, nodes: [], el: p.el, btn, idx: 0 };
       btn.setAttribute('aria-pressed', 'true'); $('#np-title').textContent = `${p.composer}, ${p.title}`;
       return;
     }
@@ -311,9 +318,9 @@ function init() {
   addEventListener('soundchange', e => { if (!e.detail) stop(); });
   function stop() {
     if (!playing) return;
-    const { out, ac, btn, nodes } = playing;
+    const { out, ac, btn, nodes, el, p } = playing;
     out.gain.setTargetAtTime(0, ac.currentTime, .09);
-    setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch (e) {} }); out.disconnect(); }, 500);
+    setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch (e) {} }); if (el) { try { p.node.disconnect(out); } catch (e) {} if (!(playing && playing.el === el)) el.pause(); } out.disconnect(); }, 500);
     btn.setAttribute('aria-pressed', 'false'); playing = null;
     $('#np-title').textContent = 'Nothing playing'; $('#np-bar').style.width = '0'; $('#np-time').textContent = '0:00';
   }
@@ -325,8 +332,8 @@ function init() {
   function draw(dt) {
     let active = -1, speed = 0, sounding = false, vib = 0;
     if (playing) {
-      const { P, t0, ac } = playing, t = ac.currentTime - t0;
-      if (t > P.total + .5) { stop(); return; }
+      const { P, t0, ac, el } = playing, t = el ? el.currentTime : ac.currentTime - t0;
+      if (t > P.total + .5 || (el && el.ended)) { stop(); return; }
       let i = playing.idx; while (i > 0 && P.notes[i].t0 > t) i--; while (P.notes[i + 1] && P.notes[i + 1].t0 <= t) i++; playing.idx = i;
       const n = P.notes[i];
       $('#np-bar').style.width = `${clamp(t / P.total, 0, 1) * 100}%`; $('#np-time').textContent = fmt(Math.max(0, t));
