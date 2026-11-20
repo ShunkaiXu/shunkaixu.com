@@ -52,14 +52,51 @@ const tabs = [
 
 <slot />
 <footer class="foot">
-  <div class="wrap mono">
-    <span>Shunkai Xu, Shanghai, 2026</span>
-    <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="/about">About</a></span>
+  <div class="wrap">
+    <div class="fb">
+      <div class="fb-id">
+        <span class="fb-sig">Shunkai Xu<i aria-hidden="true"></i></span>
+        <span class="mono fb-meta">Shanghai · 2026</span>
+      </div>
+      <nav class="fb-links mono" aria-label="Elsewhere">
+        <a href="mailto:shunkai_xu@163.com">Email</a>
+        <a href="https://github.com/ShunkaiXu">GitHub</a>
+        <a href="https://github.com/ShunkaiXu/shunkaixu.com">View source</a>
+        <a href="/about">About</a>
+      </nav>
+    </div>
+    <section class="hello" id="hello" aria-label="Where visitors are from" hidden>
+      <div class="hello-h mono"><span>Hello from</span><span id="hello-n"></span></div>
+      <ol class="hello-list mono" id="hello-list"></ol>
+    </section>
   </div>
 </footer>
+<style is:inline>
+.foot{border-top:1px solid var(--ink);padding-block:var(--s5) var(--s6);color:var(--muted)}
+.foot .wrap{display:block}
+.fb{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--s4);flex-wrap:wrap}
+.fb-id{display:grid;gap:6px}
+.fb-sig{font-family:"Caveat Brush","Marker Felt",cursive;font-size:38px;line-height:1;color:var(--ink);display:inline-flex;align-items:flex-end}
+.fb-sig i{display:inline-block;width:7px;height:7px;background:var(--orange);margin:0 0 9px 6px}
+.fb-meta,.fb-links{font-size:13px}
+.fb-links{display:flex;gap:var(--s4);flex-wrap:wrap}
+.fb-links a{text-decoration:none;color:var(--ink-2)}
+.fb-links a:hover{color:var(--orange)}
+.hello{margin-top:var(--s5);border:1px solid var(--rule);background:var(--sheet)}
+.hello-h{display:flex;justify-content:space-between;gap:var(--s3);padding:10px 14px;border-bottom:1px solid var(--rule);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+.hello-h span:first-child{color:var(--ink)}
+.hello-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));list-style:none;margin:0;padding:0}
+.hello-list li{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:13px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:0 -1px -1px 0}
+.hello-list .f{font-size:17px;line-height:1}
+.hello-list .c{color:var(--ink)}
+.hello-list .v{margin-left:auto;font-variant-numeric:tabular-nums}
+</style>
 <nav class="tabbar" aria-label="Pages">
   {tabs.map(t => <a href={t.href} data-p={t.p} aria-current={t.p === page ? 'page' : undefined}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={t.icon}/></svg><span>{t.label}</span></a>)}
 </nav>
 
+<script>
+import '../scripts/hello.js';
+</script>
 </body>
 </html>

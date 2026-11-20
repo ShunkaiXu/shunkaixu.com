@@ -1,7 +1,9 @@
-// Cloudflare Workers settings: serve the built Astro site from ./dist as static files.
+// Cloudflare Workers settings: serve the built Astro site from ./dist as static files,
+// plus a tiny Worker (worker/index.js) that only handles /api/* (the "Hello from" visitor counter).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "shunkaixu-com",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-19",
   // Keep the *.workers.dev test link and preview links on.
   "workers_dev": true,
@@ -11,8 +13,15 @@
     { "pattern": "shunkaixu.com", "custom_domain": true },
     { "pattern": "www.shunkaixu.com", "custom_domain": true }
   ],
+  // visitor counts by country (no IP addresses): one KV namespace
+  "kv_namespaces": [
+    { "binding": "VISITS", "id": "REPLACE_WITH_KV_ID" }
+  ],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // only /api/* runs the Worker; every page and file is served directly
+    "run_worker_first": ["/api/*"],
     // /about serves about.html, and /about.html redirects to /about.
     "html_handling": "auto-trailing-slash"
   }

@@ -30,9 +30,13 @@ body{padding-bottom:calc(var(--tabbar) + var(--safe-b))}
 .tabbar a:active{opacity:.55}
 
 /* ---------- footer: small and centred, above the tab bar ---------- */
-.foot{padding-block:var(--s5);font-size:13px}
-.foot .wrap{flex-direction:column;align-items:center;gap:10px;text-align:center}
-.foot .links,.foot .wrap,.foot .wrap.mono{font-size:13px}
+.foot{padding-block:var(--s5)}
+.fb{flex-direction:column;align-items:flex-start;gap:var(--s3)}
+.fb-sig{font-size:34px}
+.fb-links{gap:var(--s3) var(--s4)}
+.hello{border-radius:var(--radius);overflow:hidden}
+.hello-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hello-list li{padding:8px 10px}
 
 /* ---------- pages: iOS-style large titles ---------- */
 .page{padding-block:var(--s4) var(--s6)}
@@ -96,5 +100,7 @@ h2{letter-spacing:-.025em}
 .cell{width:14px;height:22px;font-size:12px}
 
 /* the closing piece */
-.fquote p{font-size:25px}
-.finale .fcap{bottom:var(--s4)}
+.fquote p{font-size:23px}
+.mod-name{font-size:46px}
+.mod-end{margin-top:var(--s4)}
+.mod-cap{font-size:11px}

@@ -1,129 +1,95 @@
-/* Fig. 4: the closing piece. The page broke open at the top of Home; here it mends.
-   The name is cracked into large pieces (Voronoi cells, like the wall at the top). As you scroll,
-   the pieces fly in from the edges, tumbling, and lock together left to right; thin orange cracks
-   stay visible between them. Then a quote appears underneath. */
+/* Fig. 4: the closing piece, after Le Corbusier's Modulor (1948).
+   As you scroll, a golden rectangle draws itself square by square (each labelled with its red-series
+   measure in mm), the golden spiral sweeps through it, and the red and blue series grow as two rulers.
+   Then the name and a quote settle in beside it. Plain SVG, drawn from the numbers. */
 import { Sound, CHORDS, reduce, $, clamp } from './site.js';
 
-const host = $('#finale');
-if (host) boot();
+const host = $('#finale'), art = $('#modulor');
 
-const easeOut = t => { t = clamp(t, 0, 1); return 1 - Math.pow(1 - t, 3); };
+const NS = 'http://www.w3.org/2000/svg';
 const smooth = (a, b, t) => { t = clamp((t - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
-// keep the side of a convex polygon where (p - c) . n <= 0
-function clip(poly, n, c) {
-  const out = [];
-  for (let i = 0; i < poly.length; i++) {
-    const A = poly[i], B = poly[(i + 1) % poly.length], da = (A[0] - c[0]) * n[0] + (A[1] - c[1]) * n[1], db = (B[0] - c[0]) * n[0] + (B[1] - c[1]) * n[1];
-    if (da <= 0) out.push(A);
-    if ((da < 0) !== (db < 0)) { const t = da / (da - db); out.push([A[0] + (B[0] - A[0]) * t, A[1] + (B[1] - A[1]) * t]); }
-  }
-  return out;
-}
+// the Modulor's two series (mm). Each is about 1.618 times the next; blue is double red.
+const RED = [1130, 698, 432, 267, 165, 102, 63, 39, 24];
+const RED_STACK = [1130, 432, 165, 63, 24];          // 1130 + 698 = 1829, and 698 = 432 + 165 + 63 + 24 + ...
+const BLUE_STACK = [1397, 534, 204, 78, 30];          // stacks up to 2260, the raised hand
 
-async function boot() {
-  const THREE = await import('three');
-  const stage = $('.stage', host), canvas = $('canvas', host), cap = $('#finale-cap'), quote = $('#finale-quote');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(30, 1, 10, 8000);
-  const small = matchMedia('(max-width: 760px)').matches;
-  const css = () => getComputedStyle(document.documentElement);
-  const inkMat = new THREE.MeshBasicMaterial({ transparent: true, side: THREE.DoubleSide, depthWrite: false });
-  const crackMat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, opacity: 0 });
-  let W = 0, H = 0, pieces = [], crack = null, tex = null, shown = reduce ? 1 : 0;
+function build() {
+  const el = (n, a = {}, p = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '-190 -110 2390 1300'); art.appendChild(svg);
+  const RX = 330, BASE = 1130, K = .5;                // rectangle origin; rulers drawn at half size beside it
+  const line = (d, cls = 'ln') => el('path', { d, class: cls, 'vector-effect': 'non-scaling-stroke', pathLength: 1, 'stroke-dasharray': '1 1', 'stroke-dashoffset': 1 });
 
-  /* the name as a white-on-transparent mask; the materials colour it (ink for the pieces, orange for the cracks) */
-  function nameMask() {
-    const cw = Math.min(W * (small ? .9 : .84), 1200), fs = Math.round(cw / 4.6), ch = Math.ceil(fs * 1.3), sc = Math.min(2, devicePixelRatio || 1);
-    const c = document.createElement('canvas'); c.width = Math.ceil(cw * sc); c.height = Math.ceil(ch * sc);
-    const x = c.getContext('2d'); x.scale(sc, sc); x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle';
-    const font = s => `700 ${s}px Geist, "Helvetica Neue", Arial, sans-serif`;
-    let f = fs; x.font = font(f); if ('letterSpacing' in x) x.letterSpacing = `${-f * .04}px`;
-    const mw = x.measureText('Shunkai Xu').width;
-    if (mw > cw * .96) { f = Math.floor(fs * cw * .96 / mw); x.font = font(f); if ('letterSpacing' in x) x.letterSpacing = `${-f * .04}px`; }
-    x.fillText('Shunkai Xu', cw / 2, ch * .53);
-    return { c, cw, ch, sc, data: x.getImageData(0, 0, c.width, c.height).data };
-  }
+  /* the golden rectangle, 1829 x 1130, divided into squares: left, top, right, bottom, ... */
+  let r = { x: RX, y: 0, w: 1829, h: 1130 }, spiral = '';
+  const squares = [];
+  RED.forEach((_, k) => {
+    let sq, a0, a1;
+    if (k % 4 === 0) { const s = r.h; sq = [r.x, r.y, s]; a0 = [r.x, r.y + s]; a1 = [r.x + s, r.y]; r = { x: r.x + s, y: r.y, w: r.w - s, h: r.h }; }
+    else if (k % 4 === 1) { const s = r.w; sq = [r.x, r.y, s]; a0 = [r.x, r.y]; a1 = [r.x + s, r.y + s]; r = { x: r.x, y: r.y + s, w: r.w, h: r.h - s }; }
+    else if (k % 4 === 2) { const s = r.h; sq = [r.x + r.w - s, r.y, s]; a0 = [r.x + r.w, r.y]; a1 = [r.x + r.w - s, r.y + s]; r = { x: r.x, y: r.y, w: r.w - s, h: r.h }; }
+    else { const s = r.w; sq = [r.x, r.y + r.h - s, s]; a0 = [r.x + r.w, r.y + r.h]; a1 = [r.x, r.y + r.h - s]; r = { x: r.x, y: r.y, w: r.w, h: r.h - s }; }
+    const [x, y, s] = sq;
+    squares.push({ p: line(`M${x} ${y}h${s}v${s}h${-s}Z`), x, y, s, k });
+    spiral += (k ? '' : `M${a0[0]} ${a0[1]}`) + `A${sq[2]} ${sq[2]} 0 0 1 ${a1[0]} ${a1[1]}`;
+  });
+  // the measure of each of the larger squares, tucked in its corner
+  const labels = squares.slice(0, 5).map(q => el('text', { x: q.x + 18, y: q.y + 44, opacity: 0, 'font-size': q.s > 400 ? 32 : 26 }, svg));
+  labels.forEach((t, i) => { t.textContent = RED[i]; });
+  const sp = line(spiral, 'sp');
 
-  function layout() {
-    W = stage.clientWidth; H = stage.clientHeight;
-    renderer.setSize(W, H, false);
-    camera.aspect = W / H; camera.position.set(0, 0, (H / 2) / Math.tan(camera.fov * Math.PI / 360)); camera.lookAt(0, 0, 0); camera.updateProjectionMatrix();
-    pieces.forEach(p => { scene.remove(p.m); p.m.geometry.dispose(); }); pieces = [];
-    if (crack) { scene.remove(crack); crack.geometry.dispose(); }
-    if (tex) tex.dispose();
-    const { c, cw, ch, sc, data } = nameMask();
-    tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-    inkMat.map = tex; crackMat.map = tex; inkMat.needsUpdate = crackMat.needsUpdate = true;
-    const Y = H * (small ? .1 : .12);                     // the name sits a little above centre, the quote goes below
-    // seeds on the letters, so every cell holds some of the name
-    const ink = []; for (let y = 0; y < c.height; y += 3) for (let x = 0; x < c.width; x += 3) if (data[(y * c.width + x) * 4 + 3] > 140) ink.push([x / sc - cw / 2, ch / 2 - y / sc]);
-    const S = small ? 70 : 130, seeds = [];
-    for (let k = 0; k < S && ink.length; k++) seeds.push(ink[Math.floor(Math.random() * ink.length)]);
-    const box = [[-cw / 2, -ch / 2], [cw / 2, -ch / 2], [cw / 2, ch / 2], [-cw / 2, ch / 2]], GAP = small ? 1.1 : 1.5;
-    seeds.forEach((si, i) => {
-      let poly = box.slice();
-      seeds.forEach((sj, j) => { if (i !== j && poly.length >= 3) poly = clip(poly, [sj[0] - si[0], sj[1] - si[1]], [(si[0] + sj[0]) / 2, (si[1] + sj[1]) / 2]); });
-      if (poly.length < 3) return;
-      const cx = poly.reduce((s, p) => s + p[0], 0) / poly.length, cy = poly.reduce((s, p) => s + p[1], 0) / poly.length;
-      // pull each corner in a little so a hairline crack shows between neighbours
-      const shape = new THREE.Shape(poly.map(([x, y]) => { const dx = cx - x, dy = cy - y, d = Math.hypot(dx, dy) || 1, k = Math.min(GAP, d * .3) / d; return new THREE.Vector2(x + dx * k - cx, y + dy * k - cy); }));
-      const g = new THREE.ShapeGeometry(shape), pos = g.attributes.position, uv = g.attributes.uv;
-      for (let v = 0; v < pos.count; v++) uv.setXY(v, (pos.getX(v) + cx + cw / 2) / cw, (pos.getY(v) + cy + ch / 2) / ch);
-      const m = new THREE.Mesh(g, inkMat); scene.add(m);
-      // where it comes from: off screen all round the edges, nearer the camera, turned every which way
-      const a = Math.random() * Math.PI * 2, rad = .65 + Math.random() * .4;
-      pieces.push({
-        m, to: new THREE.Vector3(cx, cy + Y, 0),
-        from: new THREE.Vector3(Math.cos(a) * W * rad, Math.sin(a) * H * rad + Y, 250 + Math.random() * 600),
-        q0: new THREE.Quaternion().setFromEuler(new THREE.Euler((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 6)),
-        at: clamp(cx / cw + .5, 0, 1) * .55 + Math.random() * .15,                  // left to right, a little uneven
-        lift: 80 + Math.random() * 260
-      });
+  // dimension lines in blue: the whole width above, the height on the left
+  const dims = el('g', { opacity: 0 });
+  el('path', { d: `M${RX} -48H${RX + 1829}M${RX} -70v44M${RX + 1829} -70v44`, class: 'dim', 'vector-effect': 'non-scaling-stroke' }, dims);
+  el('text', { x: RX + 1829 / 2, y: -64, 'text-anchor': 'middle', class: 'tb' }, dims).textContent = '1829';
+  el('path', { d: `M${RX - 44} 0V${BASE}M${RX - 66} 0h44M${RX - 66} ${BASE}h44`, class: 'dim', 'vector-effect': 'non-scaling-stroke' }, dims);
+  el('text', { x: RX - 58, y: BASE / 2, 'text-anchor': 'middle', class: 'tb', transform: `rotate(-90 ${RX - 58} ${BASE / 2})` }, dims).textContent = '1130';
+
+  /* the two rulers: red (in the site's orange) and blue, stacked from the floor, growing upward */
+  const rulers = [[RED_STACK, -60, 'rr'], [BLUE_STACK, 60, 'rb']].map(([stack, x, cls]) => {
+    const g = el('g'), clip = el('clipPath', { id: `mc-${cls}` }, el('defs')), cr = el('rect', { x: x - 220, y: BASE, width: 440, height: 0 }, clip);
+    g.setAttribute('clip-path', `url(#mc-${cls})`);
+    let y = BASE;
+    stack.forEach((v, i) => {
+      const h = v * K;
+      el('rect', { x: x - 20, y: y - h, width: 40, height: h, class: i % 2 ? 'ro' : cls, 'vector-effect': 'non-scaling-stroke' }, g);
+      const t = el('text', { x: x < 0 ? x - 34 : x + 34, y: y - h / 2 + 10, 'text-anchor': x < 0 ? 'end' : 'start', 'font-size': 24 }, g); t.textContent = v;
+      y -= h;
     });
-    crack = new THREE.Mesh(new THREE.PlaneGeometry(cw, ch), crackMat); crack.position.set(0, Y, -1); crack.renderOrder = -1; scene.add(crack);
-    retheme(); place(shown);
-  }
-  const retheme = () => { const c2 = css(); inkMat.color.set(c2.getPropertyValue('--ink').trim() || '#121212'); crackMat.color.set(c2.getPropertyValue('--orange').trim() || '#FF5A1F'); };
-  addEventListener('themechange', () => requestAnimationFrame(retheme));
+    return { cr, top: BASE - y };
+  });
 
-  const _q = new THREE.Quaternion(), ID = new THREE.Quaternion();
+  /* ---------- scroll drives the drawing ---------- */
+  const name = $('#mod-name'), quote = $('#finale-quote');
+  const setDash = (p, k) => p.setAttribute('stroke-dashoffset', 1 - k);
+  const rise = (node, k, d = 18) => { if (!node) return; node.style.opacity = k; node.style.transform = `translateY(${(1 - k) * d}px)`; };
+  let shown = reduce ? 1 : 0, sang = reduce;
   function place(p) {
-    for (const s of pieces) {
-      const e = easeOut((p - s.at) / .3);
-      s.m.position.lerpVectors(s.from, s.to, e); s.m.position.z += Math.sin(e * Math.PI) * s.lift;
-      s.m.quaternion.copy(_q.copy(s.q0).slerp(ID, e));
-      s.m.visible = e > 0;
-    }
-    crackMat.opacity = smooth(.86, 1, p);                 // the orange shows through the cracks once it is whole
+    squares.forEach((q, i) => setDash(q.p, smooth(.02 + i * .045, .14 + i * .045, p)));
+    labels.forEach((t, i) => t.setAttribute('opacity', smooth(.1 + i * .05, .2 + i * .05, p)));
+    setDash(sp, smooth(.26, .6, p));
+    dims.setAttribute('opacity', smooth(.3, .42, p));
+    rulers.forEach((R, i) => { const k = smooth(.05 + i * .06, .5 + i * .06, p), h = R.top * k + 2; R.cr.setAttribute('y', BASE - h); R.cr.setAttribute('height', h + 4); });
+    rise(name, smooth(.56, .7, p)); rise(quote, smooth(.68, .84, p), 14);
+    if (!sang && p > .62) { sang = true; Sound.chord(CHORDS[1].notes, .2, .06); }   // Elgar's E minor as the name arrives
+    if (p < .5) sang = reduce;
   }
-
-  /* ---------- scroll drives the story ---------- */
-  let lastStage = reduce ? 2 : 0;
-  await (document.fonts ? document.fonts.ready : Promise.resolve());
-  layout();
-  let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(layout, 120); }).observe(stage);
+  place(shown);
+  if (reduce) return;
   let visible = false; new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { rootMargin: '200px' }).observe(host);
-  const words = ['Pieces of the page', 'Coming back together', 'Shunkai Xu'];
-  if (cap && reduce) cap.textContent = words[2];
-  function progress() { const r = host.getBoundingClientRect(), span = r.height - innerHeight; return clamp(-r.top / Math.max(1, span), 0, 1); }
+  function progress() { const b = host.getBoundingClientRect(), span = b.height - innerHeight; return clamp(-b.top / Math.max(1, span), 0, 1); }
   let last = performance.now();
   (function frame(now) {
     requestAnimationFrame(frame);
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     if (!visible) return;
-    const pr = progress(), target = reduce ? 1 : clamp((pr - .05) / .65, 0, 1);
-    shown += (target - shown) * Math.min(1, dt * 4);      // a little lag, so a flick of the wheel still looks smooth
+    const target = clamp((progress() - .02) / .8, 0, 1);
+    if (Math.abs(target - shown) < 1e-4) return;
+    shown += (target - shown) * Math.min(1, dt * 5);      // a little lag, so a flick of the wheel still looks smooth
     if (Math.abs(target - shown) < 1e-4) shown = target;
     place(shown);
-    if (quote) { const k = reduce ? 1 : smooth(.74, .88, pr); quote.style.opacity = k; quote.style.transform = `translateY(${(1 - k) * 14}px)`; }
-    const st = shown < .04 ? 0 : shown < .99 ? 1 : 2;
-    if (st !== lastStage) {
-      if (st > lastStage && st === 2) Sound.chord(CHORDS[1].notes, .22, .06);   // Elgar's E minor as the name lands
-      lastStage = st; if (cap) cap.textContent = words[st];
-    }
-    renderer.render(scene, camera);
   })(last);
 }
+
+if (host && art) build();

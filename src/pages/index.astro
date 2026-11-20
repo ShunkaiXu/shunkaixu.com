@@ -58,16 +58,28 @@ import Layout from '../layouts/Layout.astro';
 .intro{padding-block:var(--s8) var(--s7)}
 .intro .cols{position:relative}
 @media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro h2,.intro .side{grid-column:1/-1}.intro .side{margin-top:var(--s4)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
-.finale{position:relative;height:270vh}
-.finale .stage{position:sticky;top:0;height:100svh;overflow:hidden}
-.finale canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
-.finale .fcap{position:absolute;left:0;right:0;bottom:var(--s5);display:flex;justify-content:space-between;gap:var(--s4);color:var(--muted);pointer-events:none}
-.finale .fcap b{font-weight:500;color:var(--ink)}
-.fquote{position:absolute;left:var(--pad);right:var(--pad);top:62%;margin:0;text-align:center;opacity:0;pointer-events:none;will-change:opacity,transform}
-.fquote p{font-size:clamp(24px,3.4vw,50px);font-weight:600;letter-spacing:-.025em;line-height:1.08;margin:0}
+.finale{position:relative;height:260vh}
+.finale .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;align-items:center}
+.mod{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%}
+.mod-fig{grid-column:1/8;margin:0}
+.mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:12px;color:var(--muted);max-width:52em}
+.mod-cap b{font-weight:500;color:var(--ink)}
+.mod-art svg{display:block;width:100%;height:auto;overflow:visible}
+.mod-art .ln{fill:none;stroke:var(--ink);stroke-width:1.1}
+.mod-art .dim{fill:none;stroke:var(--blue);stroke-width:1}
+.mod-art .sp{fill:none;stroke:var(--orange);stroke-width:2.2;stroke-linecap:round}
+.mod-art text{font-family:var(--mono);font-size:30px;fill:var(--muted)}
+.mod-art .tb{fill:var(--blue)}
+.mod-art .rr{fill:var(--orange)}.mod-art .rb{fill:var(--blue)}
+.mod-art .ro{fill:var(--paper);stroke:var(--ink);stroke-width:1}
+.mod-end{grid-column:9/13}
+.mod-name{font-size:clamp(46px,5.6vw,92px);font-weight:700;letter-spacing:-.045em;line-height:.95;margin:0;opacity:0;will-change:opacity,transform}
+.fquote{margin:var(--s5) 0 0;opacity:0;will-change:opacity,transform}
+.fquote p{font-size:clamp(21px,2.1vw,32px);font-weight:600;letter-spacing:-.022em;line-height:1.12;margin:0}
 .fquote p span{display:block;color:var(--muted)}
-.fquote cite{display:block;margin-top:var(--s4);font-style:normal;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
-@media (max-width:640px){.finale{height:230vh}.finale .hint{display:none}}
+.fquote cite{display:block;margin-top:var(--s3);font-style:normal;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+@media (max-width:860px){.mod-fig,.mod-end{grid-column:1/-1}.mod-end{margin-top:var(--s5)}}
+@media (max-width:640px){.finale{height:220vh}}
 
 /* loading screen: a cello outline drawn in ink as the page loads */
 html.loading{overflow:hidden}
@@ -188,13 +200,19 @@ html.loading{overflow:hidden}
 
   <div class="wrap"><div class="rule" data-chord="1"><span class="tick">§ 3</span></div></div>
 
-  <section class="finale" id="finale" aria-label="Closing: pieces of the page come back together as the name Shunkai Xu">
+  <section class="finale" id="finale" aria-label="Closing: Le Corbusier's Modulor draws itself, then the name Shunkai Xu and a quote">
     <div class="stage">
-      <canvas aria-hidden="true"></canvas>
-      <blockquote class="fquote" id="finale-quote"><p>It always seems impossible <span>until it’s done.</span></p><cite class="mono">— Nelson Mandela</cite></blockquote>
-      <div class="fcap wrap mono"><span>Fig. 4&nbsp;&nbsp;<b id="finale-cap">Pieces of the page</b></span><span class="hint">Keep scrolling.</span></div>
+      <div class="wrap mod">
+        <figure class="mod-fig">
+          <div class="mod-art" id="modulor" aria-hidden="true"></div>
+          <figcaption class="mono mod-cap"><b>Fig. 4&nbsp;&nbsp;The Modulor</b><span>Le Corbusier, 1948: two series of measures, red and blue, each about 1.618 times the last. This site is spaced with them.</span></figcaption>
+        </figure>
+        <div class="mod-end">
+          <h2 class="mod-name" id="mod-name">Shunkai Xu</h2>
+          <blockquote class="fquote" id="finale-quote"><p>It always seems impossible <span>until it’s done.</span></p><cite class="mono">— Nelson Mandela</cite></blockquote>
+        </div>
+      </div>
     </div>
-    <h2 class="vh">Shunkai Xu</h2>
   </section>
 </main>
 
