@@ -5,14 +5,25 @@ interface Props {
   description?: string;
 }
 const { title, page, description } = Astro.props;
+// the bottom tab bar on phones (app-like); icons are simple 24px line drawings
+const tabs = [
+  { p: 'home', href: '/', label: 'Home', icon: 'M3.5 10.5 12 3.8l8.5 6.7V20a1 1 0 0 1-1 1H15v-6.2H9V21H4.5a1 1 0 0 1-1-1Z' },
+  { p: 'projects', href: '/projects', label: 'Projects', icon: 'M4 4h6.5v6.5H4ZM13.5 4H20v6.5h-6.5ZM4 13.5h6.5V20H4ZM13.5 13.5H20V20h-6.5Z' },
+  { p: 'music', href: '/music', label: 'Music', icon: 'M9 18.2V5.6L20 3.4v12.4M9 18.2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM20 15.8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' },
+  { p: 'posts', href: '/posts', label: 'Posts', icon: 'M6.5 3h11a1.5 1.5 0 0 1 1.5 1.5v15a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-15A1.5 1.5 0 0 1 6.5 3ZM8.5 8h7M8.5 12h7M8.5 16h4' },
+  { p: 'interests', href: '/interests', label: 'Interests', icon: 'M4 3.5V20h16.5M7.5 15.5l4-4.5 3 3 5-6.5' },
+  { p: 'about', href: '/about', label: 'About', icon: 'M16 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21c.6-4 3.8-6 8-6s7.4 2 8 6' },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script is:inline>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
 <link rel="stylesheet" href="/assets/site.css">
+<style is:inline>.tabbar{display:none}</style>
+<link rel="stylesheet" href="/assets/phone.css" media="(max-width: 760px)">
 
 <title>{title}</title>
 {description && <meta name="description" content={description}>}
@@ -46,6 +57,9 @@ const { title, page, description } = Astro.props;
     <span class="links"><a href="mailto:shunkai_xu@163.com">Email</a><a href="https://github.com/ShunkaiXu">GitHub</a><a href="/about">About</a></span>
   </div>
 </footer>
+<nav class="tabbar" aria-label="Pages">
+  {tabs.map(t => <a href={t.href} data-p={t.p} aria-current={t.p === page ? 'page' : undefined}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={t.icon}/></svg><span>{t.label}</span></a>)}
+</nav>
 
 </body>
 </html>

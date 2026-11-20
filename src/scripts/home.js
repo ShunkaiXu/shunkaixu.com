@@ -144,15 +144,22 @@ async function boot() {
   const toPx = (x, z) => [(x + SW / 2) * PXM, (z - (SZ - SD / 2)) * PXM];
   try { await document.fonts.load('500 30px "Geist Mono"'); } catch (e) {}
   // letter layout
-  const H = .112, GAP = .3 * H, word = 'SHUNKAI XU';
-  let width = 0; for (const ch of word) width += GLYPHS[ch].w * H + GAP; width -= GAP;
-  const X0 = -width / 2, ZB = .2;
-  const letters = []; let cx = X0;
-  for (const [idx, ch] of [...word].entries()) {
-    const g = GLYPHS[ch];
-    if (ch !== ' ') letters.push({ ch, idx, strokes: g.s.map(st => st.map(([u, v]) => new THREE.Vector3(cx + u * H, 0, ZB - v * H))), x0: cx, w: g.w * H });
-    cx += g.w * H + GAP;
-  }
+  // on a tall phone screen the name goes on two rows (SHUNKAI / XU), so the camera can come closer
+  const portrait = innerWidth < 760 && innerHeight > innerWidth * 1.15;
+  const word = 'SHUNKAI XU', H = .112, GAP = .3 * H, ROWS = portrait ? ['SHUNKAI', 'XU'] : ['SHUNKAI XU'], ZB = portrait ? .13 : .2, LINE = H * 1.55;
+  const rowW = w => { let t = 0; for (const ch of w) t += GLYPHS[ch].w * H + GAP; return t - GAP; };
+  const width = Math.max(...ROWS.map(rowW)), X0 = -width / 2;
+  const rowsAt = ROWS.map((w, r) => ({ x0: -rowW(w) / 2, x1: rowW(w) / 2, zb: ZB + r * LINE }));
+  const letters = []; let idx = 0;
+  ROWS.forEach((w, r) => {
+    let cx = rowsAt[r].x0; const zb = rowsAt[r].zb;
+    for (const ch of w) {
+      const g = GLYPHS[ch];
+      if (ch !== ' ') letters.push({ ch, idx, zb, strokes: g.s.map(st => st.map(([u, v]) => new THREE.Vector3(cx + u * H, 0, zb - v * H))), x0: cx, w: g.w * H });
+      cx += g.w * H + GAP; idx++;
+    }
+    idx++;   // the gap between rows counts as the space in the name
+  });
   /* the name is written straight onto the page: a transparent layer holding the ink, a dimension line and a small title block */
   const INK = { light: { ink: '#121212', blue: '#1F4FD8', muted: '#76787B' }, dark: { ink: '#ECECE8', blue: '#7C9BFF', muted: '#80838A' } };
   function drawBase() {
@@ -163,7 +170,9 @@ async function boot() {
     for (const [px, d] of [[ax, 1], [bx, -1]]) { x.beginPath(); x.moveTo(px, ay); x.lineTo(px + d * 24, ay - 7); x.lineTo(px + d * 24, ay + 7); x.closePath(); x.fill(); x.beginPath(); x.moveTo(px, ay - 26); x.lineTo(px, toPx(0, ZB - H)[1] - 10); x.stroke(); }
     x.font = '500 28px "Geist Mono", monospace'; x.textAlign = 'center'; x.textBaseline = 'bottom';
     x.fillText(`${Math.round(width * 1000)} mm`, (ax + bx) / 2, ay - 10);
-    const [, by] = toPx(0, ZB); x.setLineDash([12, 10]); x.globalAlpha = .55; x.beginPath(); x.moveTo(ax - 40, by); x.lineTo(bx + 40, by); x.stroke(); x.setLineDash([]); x.globalAlpha = 1;
+    x.setLineDash([12, 10]); x.globalAlpha = .55;
+    for (const R of rowsAt) { const [rx0, by] = toPx(R.x0, R.zb), [rx1] = toPx(R.x1, 0); x.beginPath(); x.moveTo(rx0 - 40, by); x.lineTo(rx1 + 40, by); x.stroke(); }
+    x.setLineDash([]); x.globalAlpha = 1;
   }
   drawBase();
   const outX = out.getContext('2d'), tint = mk(), tX = tint.getContext('2d');
@@ -271,7 +280,7 @@ async function boot() {
         for (const end of [st[0], st[st.length - 1]]) { const cap = new THREE.Mesh(new THREE.SphereGeometry(.0021, 10, 8), inkMat); cap.position.copy(end); cap.castShadow = true; g.add(cap); }
       }
       const hit = new THREE.Mesh(new THREE.BoxGeometry(Math.max(L.w, .02) + .012, .02, H + .012), new THREE.MeshBasicMaterial({ visible: false }));
-      hit.position.set(L.x0 + L.w / 2, .01, ZB - H / 2); hit.userData.letter = g; g.add(hit);
+      hit.position.set(L.x0 + L.w / 2, .01, L.zb - H / 2); hit.userData.letter = g; g.add(hit);
       scene.add(g); lifted.push(g);
     });
     ctxName.clearRect(0, 0, CW, CH); dirty = true;
@@ -318,7 +327,7 @@ async function boot() {
     const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const need = (width + .2) / (2 * Math.tan(camera.fov * Math.PI / 360) * camera.aspect);
-    camera.userData.dist = Math.max(2.2, need * 1.3);
+    camera.userData.dist = Math.max(2.2, need * (portrait ? 1.08 : 1.3));
     camera.updateProjectionMatrix();
   }
   size(); new ResizeObserver(size).observe(canvas);

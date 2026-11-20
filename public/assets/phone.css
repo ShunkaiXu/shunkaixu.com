@@ -1,0 +1,100 @@
+/* iPhone and other small screens: an app-like layout.
+   Loaded only at max-width 760px (see Layout.astro), after site.css, so desktop is never affected.
+   Pattern: a slim top bar with the name, a bottom tab bar, iOS-style large titles and grouped lists. */
+
+:root{--tabbar:56px;--safe-b:env(safe-area-inset-bottom,0px);--radius:16px;--pad:16px}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(var(--tabbar) + var(--safe-b))}
+
+/* ---------- top bar: the name, plus theme and sound as small icon buttons ---------- */
+.top .wrap{grid-template-columns:1fr auto;height:50px;gap:12px}
+.top .nav,.top .menu,.top .nav.open{display:none !important}
+.brand{font-size:26px}
+.brand i{margin-bottom:8px}
+.right{gap:8px}
+.sound,.theme{height:34px;border-radius:10px}
+.theme{width:34px}
+.sound{width:34px;padding:0;justify-content:center;position:relative}
+.sound #sound-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.sound .led{width:10px;height:10px}
+
+/* ---------- bottom tab bar ---------- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-chrome);display:grid;grid-template-columns:repeat(6,1fr);
+  height:calc(var(--tabbar) + var(--safe-b));padding:0 4px var(--safe-b);
+  background:color-mix(in srgb,var(--paper) 82%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);
+  border-top:1px solid var(--rule)}
+.tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;text-decoration:none;color:var(--muted);
+  font-size:10px;font-weight:500;letter-spacing:.01em;transition:color .15s}
+.tabbar svg{width:24px;height:24px}
+.tabbar a[aria-current="page"]{color:var(--orange)}
+.tabbar a:active{opacity:.55}
+
+/* ---------- footer: small and centred, above the tab bar ---------- */
+.foot{padding-block:var(--s5);font-size:13px}
+.foot .wrap{flex-direction:column;align-items:center;gap:10px;text-align:center}
+.foot .links,.foot .wrap,.foot .wrap.mono{font-size:13px}
+
+/* ---------- pages: iOS-style large titles ---------- */
+.page{padding-block:var(--s4) var(--s6)}
+.head{padding-bottom:var(--s4)}
+.head .fig{grid-column:1/-1;font-size:11.5px}
+.head h1{font-size:40px;line-height:1.02;letter-spacing:-.035em;margin:4px 0 0}
+.head p{font-size:17px;line-height:1.42;margin-top:var(--s3)}
+h2{letter-spacing:-.025em}
+
+/* ---------- lists become inset grouped cards, like iOS Settings ---------- */
+.spec{border:1px solid var(--rule);border-radius:var(--radius);background:var(--sheet);overflow:hidden}
+.spec > li,.spec > a{grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;row-gap:2px;padding:14px 16px;align-items:start}
+.spec > li:last-child,.spec > a:last-child{border-bottom:0}
+.spec .n{grid-column:1;grid-row:1 / span 3;padding-top:4px;font-size:12px;min-width:1.6em}
+.spec .t{grid-column:2;font-size:18px;line-height:1.25}
+.spec .d{grid-column:2;margin-top:2px;font-size:15px;line-height:1.4}
+.spec .m{grid-column:2;margin-top:4px;text-align:left;font-size:12px}
+.spec > a::after{content:"";grid-column:3;grid-row:1 / span 3;align-self:center;width:8px;height:8px;margin-right:3px;
+  border-right:1.6px solid var(--muted);border-top:1.6px solid var(--muted);transform:rotate(45deg)}
+.spec > a:hover{background:none}
+.spec > a:hover .t{transform:none}
+.spec > a:active{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+
+/* the orange field: a thin strip that stays clear of the text */
+.dither{width:6vw}
+[data-dither] > .wrap,[data-dither] > main{padding-left:calc(6vw + 12px)}
+
+/* section dividers: a little less air */
+.sect{padding-block:var(--s5)}
+
+/* ---------- Home ---------- */
+.hero{height:calc(100svh - 50px - var(--tabbar) - var(--safe-b));min-height:520px}
+.hero .corner{top:12px}
+.hero .btn{height:32px;padding:0 12px;border-radius:999px;font-size:11.5px}
+.hero .cap{bottom:var(--s4)}
+.hero .fig{border-radius:12px;margin-left:-4px}
+.intro{padding-block:var(--s6) var(--s5)}
+.intro h2{font-size:31px;line-height:1.08}
+.intro .side{font-size:16px}
+.doors{margin-top:var(--s5)}
+
+/* Play me something: the cello on top, a compact player card below */
+.play .cols{display:flex;flex-direction:column;align-items:stretch}
+.play .stage{order:-1;width:100%;margin:0 0 var(--s4)}
+.cellobox{width:min(64vw,calc(52svh * 940 / 1660));margin:0 auto}
+.play .pick{width:100%}
+.play .side{font-size:16px;margin-top:var(--s3)}
+.pieces{margin-top:var(--s4)}
+.spec.pieces > li{display:block;padding:0}
+.pieces button{grid-template-columns:2em minmax(0,1fr) auto;gap:10px;padding:13px 16px;align-items:center}
+.pieces li:last-child button{border-bottom:0}
+.pieces button .t{font-size:17px}
+.pieces button .t small{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now{grid-template-columns:minmax(0,1fr) 72px auto;margin-top:var(--s3);padding:12px 16px;border:1px solid var(--rule);border-radius:var(--radius);background:var(--sheet)}
+.now #np-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.credit{font-size:11px;line-height:1.5}
+
+/* Right now: one card, rows stacked */
+.board{border:1px solid var(--rule);border-radius:var(--radius);background:var(--sheet);padding:0 16px;margin-top:var(--s4)}
+.board li:last-child{border-bottom:0}
+.cell{width:14px;height:22px;font-size:12px}
+
+/* the closing piece */
+.fquote p{font-size:25px}
+.finale .fcap{bottom:var(--s4)}
