@@ -37,6 +37,21 @@ const tabs = [
 <style is:inline>.tabbar{display:none}
 /* page transitions: modern browsers cross-fade between pages; the header and tab bar stay put,
    and the big page title slides in. Nothing happens for visitors who prefer reduced motion. */
+/* first-visit sound hint (src/scripts/site.js) */
+.shint{position:fixed;z-index:60;width:0;height:0}
+.shint svg{position:absolute;left:-90px;top:0;width:96px;height:72px;overflow:visible;pointer-events:none}
+.shint .a,.shint .h{fill:none;stroke:var(--orange);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.shint .a{stroke-dasharray:160;stroke-dashoffset:160;transition:stroke-dashoffset .8s cubic-bezier(.6,.05,.3,1) .1s}
+.shint .h{opacity:0;transition:opacity .2s .8s}
+.shint-t{-webkit-appearance:none;appearance:none;position:absolute;right:66px;top:60px;border:0;background:none;padding:0;cursor:pointer;white-space:nowrap;text-align:right;
+  font-family:"Caveat Brush","Marker Felt",cursive;font-size:27px;line-height:1;color:var(--ink);opacity:0;transform:translateY(6px);transition:opacity .4s .55s,transform .5s .55s}
+.shint-t small{display:block;margin-top:5px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--muted)}
+.shint.on .a{stroke-dashoffset:0}.shint.on .h{opacity:1}.shint.on .shint-t{opacity:1;transform:none}
+.shint.on svg{animation:shint-bob 1.8s ease-in-out 1.3s infinite}
+@keyframes shint-bob{50%{transform:translate(-2px,3px)}}
+.sound.hinted .led{background:var(--orange);animation:shint-led 1.4s ease-in-out infinite}
+@keyframes shint-led{50%{box-shadow:0 0 0 5px rgba(255,90,31,.22)}}
+@media (prefers-reduced-motion:reduce){.shint *{transition:none!important;animation:none!important}.sound.hinted .led{animation:none}}
 /* reveals (src/scripts/reveal.js) */
 .rv{opacity:0;transform:translateY(16px)}
 .rv.rv-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.2,1) var(--rv-d,0ms),transform .8s cubic-bezier(.2,.8,.2,1) var(--rv-d,0ms)}

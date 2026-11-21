@@ -11,7 +11,7 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { ret
    that sits under whatever else the visitor is listening to. Off until switched on; the choice is
    remembered. iPhone: playback session before the context exists, plus a silent looping <audio>. */
 export const Sound = (() => {
-  let ac, bus, master, keep, on = store.get('snd') === '1';
+  let ac, bus, master, keep, on = false;   // sound always starts off; it is never remembered between visits
   const bufs = new Map();
   function silence() {
     const n = 4000, b = new DataView(new ArrayBuffer(44 + n)), w = (o, s) => [...s].forEach((c, i) => b.setUint8(o + i, c.charCodeAt(0)));
@@ -100,7 +100,7 @@ export const Sound = (() => {
     raw() { const c = ctx(); return c ? { ac: c, dest: bus.__comp, master } : null; },
     get on() { return on; },
     set(v) {
-      on = v; store.set('snd', v ? '1' : '0'); if (v) ctx(); hold(v);
+      on = v; if (v) ctx(); hold(v);
       if (ac && master) master.gain.setTargetAtTime(v ? 1 : 0, ac.currentTime, .04);
       dispatchEvent(new CustomEvent('soundchange', { detail: v }));
     },
@@ -125,6 +125,29 @@ function show() { btn.setAttribute('aria-pressed', Sound.on); label.textContent 
 show();
 btn.addEventListener('click', () => { Sound.set(!Sound.on); show(); if (Sound.on) NAME_MOTIF.forEach((m, i) => Sound.note(m, .26, i * .16)); });
 ['pointerdown', 'keydown'].forEach(t => addEventListener(t, () => Sound.wake(), { once: true, capture: true }));
+/* First visit: a hand-drawn arrow points at the Sound button, so people know the site can play.
+   It goes away for good once they turn sound on or tap the hint. On Home it waits for the loading screen. */
+(function soundHint() {
+  if (!btn || store.get('sound-hint') === 'seen') return;
+  const el = document.createElement('div'); el.className = 'shint';
+  el.innerHTML = '<svg viewBox="0 0 120 90" aria-hidden="true"><path class="a" d="M14 82C30 72 54 68 72 52S98 20 104 7"/><path class="h" d="M91 15L104 6L107 21"/></svg>'
+    + '<button type="button" class="shint-t">Turn on sound<small>to hear the cello · tap to hide</small></button>';
+  const place = () => { const r = btn.getBoundingClientRect(); el.style.top = `${Math.round(r.bottom + 6)}px`; el.style.left = `${Math.round(r.left + r.width / 2)}px`; };
+  const dismiss = () => {
+    store.set('sound-hint', 'seen'); btn.classList.remove('hinted'); el.classList.remove('on');
+    removeEventListener('resize', place); setTimeout(() => el.remove(), 450);
+  };
+  btn.addEventListener('click', dismiss, { once: true });
+  el.querySelector('.shint-t').addEventListener('click', dismiss);
+  const showHint = () => {
+    if (!btn.isConnected || Sound.on) return;
+    document.body.appendChild(el); place(); addEventListener('resize', place);
+    btn.classList.add('hinted');
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+  };
+  const ld = window.__loader;
+  if (ld && ld.whenGone) ld.whenGone().then(() => setTimeout(showHint, 700)); else setTimeout(showHint, 900);
+})();
 const themeBtn = $('#theme');
 export const theme = () => document.documentElement.dataset.siteTheme === 'dark' ? 'dark' : 'light';
 if (themeBtn) themeBtn.addEventListener('click', () => {
