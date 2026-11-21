@@ -35,7 +35,7 @@ body{padding-bottom:calc(var(--tabbar) + var(--safe-b))}
 .fb-sig{font-size:34px}
 .fb-links{gap:var(--s3) var(--s4)}
 .hello{border-radius:var(--radius);overflow:hidden}
-.hello-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hello-list{grid-template-columns:repeat(2,minmax(0,1fr))}
 .hello-list li{padding:8px 10px}
 
 /* ---------- pages: iOS-style large titles ---------- */

@@ -1,5 +1,5 @@
 /* Fig. 4: the closing piece, after Le Corbusier's Modulor (1948).
-   As you scroll, a golden rectangle draws itself square by square (each labelled with its red-series
+   When it comes into view, a golden rectangle draws itself square by square (each labelled with its red-series
    measure in mm), the golden spiral sweeps through it, and the red and blue series grow as two rulers.
    Then the name and a quote settle in beside it. Plain SVG, drawn from the numbers. */
 import { Sound, CHORDS, reduce, $, clamp } from './site.js';
@@ -77,19 +77,17 @@ function build() {
   }
   place(shown);
   if (reduce) return;
-  let visible = false; new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { rootMargin: '200px' }).observe(host);
-  function progress() { const b = host.getBoundingClientRect(), span = b.height - innerHeight; return clamp(-b.top / Math.max(1, span), 0, 1); }
-  let last = performance.now();
-  (function frame(now) {
-    requestAnimationFrame(frame);
-    const dt = Math.min(.05, (now - last) / 1000); last = now;
-    if (!visible) return;
-    const target = clamp((progress() - .02) / .8, 0, 1);
-    if (Math.abs(target - shown) < 1e-4) return;
-    shown += (target - shown) * Math.min(1, dt * 5);      // a little lag, so a flick of the wheel still looks smooth
-    if (Math.abs(target - shown) < 1e-4) shown = target;
-    place(shown);
-  })(last);
+  // draw it once, over about three seconds, when the section comes into view
+  const DUR = 3200;
+  const run = () => {
+    const t0 = performance.now();
+    (function frame(now) {
+      const k = clamp((now - t0) / DUR, 0, 1);
+      place(k < 1 ? k * k * (3 - 2 * k) * .35 + k * .65 : 1);   // gentle start and finish
+      if (k < 1) requestAnimationFrame(frame);
+    })(t0);
+  };
+  new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); run(); } }, { threshold: .35 }).observe(host);
 }
 
 if (host && art) build();

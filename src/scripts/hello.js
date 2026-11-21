@@ -2,7 +2,6 @@
    visit per visitor per day by country (it stores no IP addresses) and returns the totals. If the counter
    isn't reachable (for example on the local dev server), the block simply stays hidden. */
 const box = document.getElementById('hello'), list = document.getElementById('hello-list'), count = document.getElementById('hello-n');
-const flag = cc => String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0)));
 let names = null; try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) {}
 
 if (box) {
@@ -13,11 +12,12 @@ if (box) {
       list.innerHTML = '';
       for (const [cc, n] of d.top) {
         const li = document.createElement('li');
-        li.title = names ? names.of(cc) : cc;
-        li.innerHTML = `<span class="f" aria-hidden="true">${flag(cc)}</span><span class="c">${cc}</span><span class="v">${n.toLocaleString('en')}</span>`;
+        // country code and name as text: emoji flags look different on every device (and some hide some flags)
+        const name = names ? names.of(cc) : cc;
+        li.innerHTML = `<span class="c">${cc}</span><span class="nm">${name}</span><span class="v">${n.toLocaleString('en')}</span>`;
         list.appendChild(li);
       }
-      count.textContent = `${d.total.toLocaleString('en')} visits · ${d.countries} ${d.countries === 1 ? 'country' : 'countries'}`;
+      count.textContent = `${d.total.toLocaleString('en')} ${d.total === 1 ? 'visit' : 'visits'} · ${d.countries} ${d.countries === 1 ? 'country' : 'countries'}`;
       box.hidden = false;
     })
     .catch(() => {});

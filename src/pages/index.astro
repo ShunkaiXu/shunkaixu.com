@@ -58,8 +58,8 @@ import Layout from '../layouts/Layout.astro';
 .intro{padding-block:var(--s8) var(--s7)}
 .intro .cols{position:relative}
 @media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro h2,.intro .side{grid-column:1/-1}.intro .side{margin-top:var(--s4)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
-.finale{position:relative;height:260vh}
-.finale .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;align-items:center}
+.finale{position:relative;padding-block:var(--s7) var(--s7)}
+.finale .stage{display:block}
 .mod{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%}
 .mod-fig{grid-column:1/8;margin:0}
 .mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:12px;color:var(--muted);max-width:52em}
@@ -79,7 +79,7 @@ import Layout from '../layouts/Layout.astro';
 .fquote p span{display:block;color:var(--muted)}
 .fquote cite{display:block;margin-top:var(--s3);font-style:normal;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
 @media (max-width:860px){.mod-fig,.mod-end{grid-column:1/-1}.mod-end{margin-top:var(--s5)}}
-@media (max-width:640px){.finale{height:220vh}}
+@media (max-width:640px){.finale{padding-block:var(--s6)}}
 
 /* loading screen: a cello outline drawn in ink as the page loads */
 html.loading{overflow:hidden}
