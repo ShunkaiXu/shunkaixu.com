@@ -15,7 +15,7 @@
   ],
   // visitor counts by country (no IP addresses): one KV namespace
   "kv_namespaces": [
-    { "binding": "VISITS", "id": "REPLACE_WITH_KV_ID" }
+    { "binding": "VISITS", "id": "aa88a17b634046b1abc11d017f0b4e4f" }
   ],
   "assets": {
     "directory": "./dist",
