@@ -28,7 +28,7 @@ for (const host of $$('[data-dither]')) {
   if (!reduce) {
     addEventListener('pointermove', e => {
       const [cx, cy, b] = toCells(e);
-      P.near = e.clientY > b.top && e.clientY < b.bottom && e.clientX < b.right + 420 ? 1 : 0;
+      P.near = e.clientY > b.top && e.clientY < b.bottom && e.clientX < b.right + 240 ? 1 : 0;
       if (P.sx < -50) { P.sx = cx; P.sy = cy; }
       P.x = cx; P.y = cy;
     }, { passive: true });
@@ -55,7 +55,7 @@ for (const host of $$('[data-dither]')) {
       let edge = (.44 + .22 * (fbm(yy * 2.4 + seed, t * .05 + sc) - .5) * 2 + .08 * Math.sin(yy * 5 + t * .25 + sc * 2)) * cols;
       if (act > .01) {   // reach for the cursor: a soft bulge centred on its row, weaker the further away it is
         const reach = Math.max(0, Math.min(px, cols * .97) - edge), gy = Math.exp(-((j - py) ** 2) / (2 * SIG * SIG));
-        edge += act * gy * reach * .85;
+        edge += act * gy * Math.min(reach * .35, 48 / CELL);   // a gentle lean toward the cursor, at most ~48 px
       }
       // fade in and out at the section's top and bottom so the field is a soft shape, never a cut-off block
       const ev = Math.min(1, yy / .3, (1 - yy) / .3), env = ev <= 0 ? 0 : ev * ev * (3 - 2 * ev);
