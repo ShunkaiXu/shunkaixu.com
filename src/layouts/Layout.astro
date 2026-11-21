@@ -4,7 +4,19 @@ interface Props {
   page: string;
   description?: string;
 }
-const { title, page, description } = Astro.props;
+const { title, page } = Astro.props;
+// a short description for search results and link previews (Home passes its own)
+const DESC = {
+  home: 'Shunkai Xu plays the cello, builds iPhone apps and programs robots.',
+  projects: 'Kept, Tempo, the drawing robot arm and smaller projects by Shunkai Xu.',
+  music: 'Shunkai Xu on the cello: what he is working on, summer programmes, performances and competitions.',
+  posts: 'Notes by Shunkai Xu on building things and on practice.',
+  interests: 'What Shunkai Xu follows: computational economics, Formula 1, football and algorithms.',
+  about: 'Shunkai Xu, a high school student in Shanghai who plays the cello, builds iPhone apps and writes robot code.',
+};
+const description = Astro.props.description || DESC[page] || DESC.home;
+const url = new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/'), Astro.site).href;
+const og = new URL('/og.png', Astro.site).href;
 // the bottom tab bar on phones (app-like); icons are simple 24px line drawings
 const tabs = [
   { p: 'home', href: '/', label: 'Home', icon: 'M3.5 10.5 12 3.8l8.5 6.7V20a1 1 0 0 1-1 1H15v-6.2H9V21H4.5a1 1 0 0 1-1-1Z' },
@@ -22,11 +34,58 @@ const tabs = [
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script is:inline>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
 <link rel="stylesheet" href="/assets/site.css">
-<style is:inline>.tabbar{display:none}</style>
+<style is:inline>.tabbar{display:none}
+/* page transitions: modern browsers cross-fade between pages; the header and tab bar stay put,
+   and the big page title slides in. Nothing happens for visitors who prefer reduced motion. */
+/* reveals (src/scripts/reveal.js) */
+.rv{opacity:0;transform:translateY(16px)}
+.rv.rv-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.2,1) var(--rv-d,0ms),transform .8s cubic-bezier(.2,.8,.2,1) var(--rv-d,0ms)}
+/* list rows: a small orange arrow slides in on hover (mouse only) */
+@media (hover:hover){
+  .spec > a .t::after{content:"\2192";display:inline-block;margin-left:.35em;color:var(--orange);opacity:0;transform:translateX(-6px);transition:opacity .25s,transform .35s cubic-bezier(.2,.8,.2,1)}
+  .spec > a:hover .t::after{opacity:1;transform:none}
+  /* footer links: an underline that draws in from the left */
+  .fb-links a{text-decoration:none;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .35s cubic-bezier(.2,.8,.2,1),color .2s}
+  .fb-links a:hover{background-size:100% 1px}
+}
+/* links inside text: a faint underline that turns orange on hover */
+main p a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,currentColor 35%,transparent);transition:text-decoration-color .2s,color .2s}
+main p a:hover{text-decoration-color:var(--orange)}
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
+  .top{view-transition-name:chrome}
+  .tabbar{view-transition-name:tabs}
+  .head h1{view-transition-name:title}
+  ::view-transition-old(root){animation:vt-out .22s cubic-bezier(.4,0,1,1) both}
+  ::view-transition-new(root){animation:vt-in .42s cubic-bezier(.2,.8,.2,1) both}
+  ::view-transition-old(title){animation:vt-out .2s ease both}
+  ::view-transition-new(title){animation:vt-title .55s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes vt-out{to{opacity:0}}
+  @keyframes vt-in{from{opacity:0;transform:translateY(10px)}}
+  @keyframes vt-title{from{opacity:0;transform:translateY(22px)}}
+}
+</style>
 <link rel="stylesheet" href="/assets/phone.css" media="(max-width: 760px)">
 
 <title>{title}</title>
-{description && <meta name="description" content={description}>}
+<meta name="description" content={description}>
+<link rel="canonical" href={url}>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#F3F3F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111214" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Shunkai Xu">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={url}>
+<meta property="og:image" content={og}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Shunkai Xu, with a golden-ratio spiral drawing">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content={og}>
 <slot name="head" />
 </head>
 <body data-page={page}>
@@ -97,6 +156,7 @@ const tabs = [
 
 <script>
 import '../scripts/hello.js';
+import '../scripts/reveal.js';
 </script>
 </body>
 </html>

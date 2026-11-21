@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<style>.bg{fill:#F3F3F0}.ink{stroke:#121212}@media (prefers-color-scheme:dark){.bg{fill:#111214}.ink{stroke:#ECECE8}}</style>
+<rect class="bg" width="32" height="32" rx="7"/>
+<path class="ink" d="M20.35 9.79L19.80 8.43L18.86 7.26L17.60 6.38L16.12 5.85L14.54 5.72L12.98 5.98L11.56 6.63L10.39 7.62L9.58 8.86L9.17 10.25L9.21 11.69L9.68 13.07L10.56 14.27L11.77 15.21L13.23 15.80L14.80 16.00L14.80 15.79L16.33 15.99L17.75 16.57L18.95 17.49L19.84 18.69L20.35 20.06L20.46 21.52L20.14 22.95L19.43 24.24L18.37 25.31L17.05 26.06L15.56 26.45L14.01 26.45L12.52 26.05L11.21 25.29L10.16 24.22L9.45 22.92L9.14 21.49L9.25 20.03" fill="none" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="23.2" y="21.6" width="3.6" height="3.6" fill="#FF5A1F"/>
+</svg>

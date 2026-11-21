@@ -69,7 +69,6 @@ h2{letter-spacing:-.025em}
 
 /* ---------- Home ---------- */
 .hero{height:calc(100svh - 50px - var(--tabbar) - var(--safe-b));min-height:520px}
-.hero .corner{top:12px}
 .hero .btn{height:32px;padding:0 12px;border-radius:999px;font-size:11.5px}
 .hero .cap{bottom:var(--s4)}
 .hero .fig{border-radius:12px;margin-left:-4px}
