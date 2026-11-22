@@ -38,17 +38,17 @@ import Layout from '../layouts/Layout.astro';
 .pieces{margin-top:var(--s5)}
 .spec.pieces > li{display:block;padding:0;border:0}
 .pieces button{-webkit-appearance:none;appearance:none;display:grid;grid-template-columns:2.2em 1fr auto;gap:12px;align-items:baseline;width:100%;padding:var(--s3) 0;border:0;border-bottom:1px solid var(--rule);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
-.pieces button .n{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.pieces button .n{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
 .pieces button .t{font-weight:600;letter-spacing:-.015em;font-size:19px}
 .pieces button .t small{display:block;font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0}
-.pieces button .m{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.pieces button .m{font-family:var(--mono);font-size:13px;color:var(--muted)}
 .pieces button:hover .t{color:var(--orange)}
 .pieces button[aria-pressed="true"] .n{color:var(--orange)}
 .pieces button[aria-pressed="true"] .n::before{content:"▶ "}
 .pieces button[disabled]{cursor:default;opacity:.55}
 .pieces button[disabled]:hover .t{color:inherit}
-.now{display:grid;grid-template-columns:1fr minmax(80px,30%) auto;gap:14px;align-items:center;margin-top:var(--s4);color:var(--muted);font-size:12.5px}
-.credit{margin-top:var(--s4);font-size:11.5px;color:var(--muted)}
+.now{display:grid;grid-template-columns:1fr minmax(80px,30%) auto;gap:14px;align-items:center;margin-top:var(--s4);color:var(--muted);font-size:13.5px}
+.credit{margin-top:var(--s4);font-size:13px;color:var(--muted)}
 .now .bar{height:2px;background:var(--rule);position:relative}
 .now .bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--orange)}
 .play .stage{grid-column:8/13}
@@ -62,7 +62,7 @@ import Layout from '../layouts/Layout.astro';
 .finale .stage{display:block}
 .mod{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%}
 .mod-fig{grid-column:1/8;margin:0}
-.mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:12px;color:var(--muted);max-width:52em}
+.mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:13px;color:var(--muted);max-width:52em}
 .mod-cap b{font-weight:500;color:var(--ink)}
 .mod-art svg{display:block;width:100%;height:auto;overflow:visible}
 .mod-art .ln{fill:none;stroke:var(--ink);stroke-width:1.1}
@@ -77,7 +77,7 @@ import Layout from '../layouts/Layout.astro';
 .fquote{margin:var(--s5) 0 0;opacity:0;will-change:opacity,transform}
 .fquote p{font-size:clamp(21px,2.1vw,32px);font-weight:600;letter-spacing:-.022em;line-height:1.12;margin:0}
 .fquote p span{display:block;color:var(--muted)}
-.fquote cite{display:block;margin-top:var(--s3);font-style:normal;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+.fquote cite{display:block;margin-top:var(--s3);font-style:normal;font-size:13.5px;color:var(--muted);letter-spacing:.04em}
 @media (max-width:860px){.mod-fig,.mod-end{grid-column:1/-1}.mod-end{margin-top:var(--s5)}}
 @media (max-width:640px){.finale{padding-block:var(--s6)}}
 
@@ -93,7 +93,7 @@ html.loading{overflow:hidden}
 .loader .ink{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
 .loader .lvl{fill:var(--orange)}
 .loader .tip{fill:var(--orange)}
-.loader .pct{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.loader .pct{font-family:var(--mono);font-size:13.5px;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 </style>
 
 <div class="loader" id="loader" role="progressbar" aria-label="Loading the page" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -174,7 +174,7 @@ html.loading{overflow:hidden}
   </section>
   </div>
 
-  <div class="wrap"><div class="rule" data-chord="0"><span class="tick">§ 1</span></div></div>
+  <div class="wrap"><div class="rule" data-chord="0"></div></div>
 
   <section class="wrap sect play" id="play">
     <div class="cols">
@@ -190,7 +190,7 @@ html.loading{overflow:hidden}
     </div>
   </section>
 
-  <div class="wrap"><div class="rule" data-chord="2"><span class="tick">§ 2</span></div></div>
+  <div class="wrap"><div class="rule" data-chord="2"></div></div>
 
   <section class="wrap sect">
     <h2>Right now</h2>
@@ -202,7 +202,7 @@ html.loading{overflow:hidden}
     </ol>
   </section>
 
-  <div class="wrap"><div class="rule" data-chord="1"><span class="tick">§ 3</span></div></div>
+  <div class="wrap"><div class="rule" data-chord="1"></div></div>
 
   <section class="finale" id="finale" aria-label="Closing: Le Corbusier's Modulor draws itself, then the name Shunkai Xu and a quote">
     <div class="stage">

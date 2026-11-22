@@ -125,25 +125,41 @@ function show() { btn.setAttribute('aria-pressed', Sound.on); label.textContent 
 show();
 btn.addEventListener('click', () => { Sound.set(!Sound.on); show(); if (Sound.on) NAME_MOTIF.forEach((m, i) => Sound.note(m, .26, i * .16)); });
 ['pointerdown', 'keydown'].forEach(t => addEventListener(t, () => Sound.wake(), { once: true, capture: true }));
-/* First visit: a hand-drawn arrow points at the Sound button, so people know the site can play.
-   It goes away for good once they turn sound on or tap the hint. On Home it waits for the loading screen. */
+/* First visit only: a small note under the Sound button says the site can play. It never blocks
+   anything: it fades out by itself after 10 s, on scroll, or on either button, and is never shown again. */
 (function soundHint() {
   if (!btn || store.get('sound-hint') === 'seen') return;
-  const el = document.createElement('div'); el.className = 'shint';
-  el.innerHTML = '<svg viewBox="0 0 120 90" aria-hidden="true"><path class="a" d="M14 82C30 72 54 68 72 52S98 20 104 7"/><path class="h" d="M91 15L104 6L107 21"/></svg>'
-    + '<button type="button" class="shint-t">Turn on sound<small>to hear the cello · tap to hide</small></button>';
-  const place = () => { const r = btn.getBoundingClientRect(); el.style.top = `${Math.round(r.bottom + 6)}px`; el.style.left = `${Math.round(r.left + r.width / 2)}px`; };
-  const dismiss = () => {
-    store.set('sound-hint', 'seen'); btn.classList.remove('hinted'); el.classList.remove('on');
-    removeEventListener('resize', place); setTimeout(() => el.remove(), 450);
+  const LIFE = 10000;
+  const el = document.createElement('div'); el.className = 'shint'; el.setAttribute('role', 'status');
+  el.innerHTML = '<b>This site can play music</b><p>Recordings of my cello and a few small sounds. It stays quiet unless you turn it on.</p>'
+    + '<div class="row"><button type="button" class="go">Turn sound on</button><button type="button" class="no">Not now</button></div>';
+  const place = () => {
+    const r = btn.getBoundingClientRect(), right = Math.max(12, innerWidth - r.right);
+    el.style.top = `${Math.round(r.bottom + 10)}px`; el.style.right = `${Math.round(right)}px`;
+    el.style.setProperty('--nib', `${Math.round(r.width / 2 - 5)}px`);
   };
+  let timer = 0;
+  const dismiss = () => {
+    clearTimeout(timer); btn.classList.remove('hinted'); el.classList.remove('on');
+    removeEventListener('resize', place); removeEventListener('scroll', onScroll); setTimeout(() => el.remove(), 450);
+  };
+  const y0 = { v: 0 }, onScroll = () => { if (Math.abs(scrollY - y0.v) > 240) dismiss(); };
   btn.addEventListener('click', dismiss, { once: true });
-  el.querySelector('.shint-t').addEventListener('click', dismiss);
+  el.querySelector('.go').addEventListener('click', () => { dismiss(); if (!Sound.on) btn.click(); });
+  el.querySelector('.no').addEventListener('click', dismiss);
   const showHint = () => {
     if (!btn.isConnected || Sound.on) return;
+    store.set('sound-hint', 'seen');   // shown once, ever
     document.body.appendChild(el); place(); addEventListener('resize', place);
+    y0.v = scrollY; addEventListener('scroll', onScroll, { passive: true });
     btn.classList.add('hinted');
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+    let left = LIFE, since = performance.now();
+    const arm = () => { timer = setTimeout(dismiss, left); };
+    // pause the countdown while the pointer is on the note, so it never vanishes mid-read
+    el.addEventListener('pointerenter', () => { clearTimeout(timer); left = Math.max(2500, left - (performance.now() - since)); });
+    el.addEventListener('pointerleave', () => { since = performance.now(); arm(); });
+    arm();
   };
   const ld = window.__loader;
   if (ld && ld.whenGone) ld.whenGone().then(() => setTimeout(showHint, 700)); else setTimeout(showHint, 900);

@@ -14,13 +14,13 @@ import Layout from '../layouts/Layout.astro';
 .dial .face{fill:var(--sheet);stroke:var(--ink);stroke-width:1}
 .dial .tk{stroke:var(--ink);stroke-width:1}
 .dial .tk.mn{stroke:var(--rule)}
-.dial .lb{font-family:var(--mono);font-size:11px;fill:var(--muted);text-anchor:middle;dominant-baseline:central}
+.dial .lb{font-family:var(--mono);font-size:12.5px;fill:var(--muted);text-anchor:middle;dominant-baseline:central}
 .dial .wedge{fill:var(--orange)}
 .dial .knob{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
 .dial .hub{fill:var(--ink)}
 .dial:focus-visible .face{stroke:var(--blue);stroke-width:2}
 .read{font-family:var(--mono);font-size:clamp(64px,9vw,132px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
-.read small{display:block;font-size:13px;letter-spacing:0;color:var(--muted);margin-bottom:var(--s3)}
+.read small{display:block;font-size:14px;letter-spacing:0;color:var(--muted);margin-bottom:var(--s3)}
 .tools{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4);align-items:center}
 .tools + .tools{margin-top:var(--s2)}
 .tlog{margin-top:var(--s5);color:var(--muted)}
@@ -42,7 +42,7 @@ import Layout from '../layouts/Layout.astro';
     <li><span class="n">05</span><span class="t">Hold'em simulator</span><span class="d">Plays out thousands of poker hands to estimate equity.</span><span class="m">Simulation</span></li>
   </ul>
 
-  <div class="rule" data-chord="2"><span class="tick">§ 4</span></div>
+  <div class="rule" data-chord="2"></div>
 
   <section class="tempo" id="tempo">
     <div class="cols"><h2>Try Tempo</h2><p>The timer from my iPhone app, rebuilt for the web. Drag the dial to set the time, or pick a preset. It keeps running if you leave the page, and it counts what you finish today.</p></div>
