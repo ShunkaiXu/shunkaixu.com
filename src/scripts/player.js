@@ -169,7 +169,7 @@ function init() {
     const raw = await (await fetch('/assets/cello-samples.json')).json();
     return Promise.all(raw.map(async r => ({ ...r, bin: await (await fetch('/assets/' + r.file)).arrayBuffer() })));
   })());
-  new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); fetchSamples(); } }, { rootMargin: '300px 0px' }).observe(box);
+  new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); if (PIECES && PIECES.some(p => !p.live)) fetchSamples(); } }, { rootMargin: '300px 0px' }).observe(box);
   async function loadSamples(ac) {
     if (SAMPLES) return SAMPLES;
     const raw = await fetchSamples();
