@@ -19,12 +19,12 @@ body{padding-bottom:calc(var(--tabbar) + var(--safe-b))}
 .sound .led{width:10px;height:10px}
 
 /* ---------- bottom tab bar ---------- */
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-chrome);display:grid;grid-template-columns:repeat(6,1fr);
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:var(--z-chrome);display:grid;grid-template-columns:repeat(5,1fr);
   height:calc(var(--tabbar) + var(--safe-b));padding:0 4px var(--safe-b);
   background:color-mix(in srgb,var(--paper) 82%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);
   border-top:1px solid var(--rule)}
 .tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;text-decoration:none;color:var(--muted);
-  font-size:10px;font-weight:500;letter-spacing:.01em;transition:color .15s}
+  font-size:10.5px;font-weight:500;letter-spacing:.01em;transition:color .15s}
 .tabbar svg{width:24px;height:24px}
 .tabbar a[aria-current="page"]{color:var(--orange)}
 .tabbar a:active{opacity:.55}
@@ -60,9 +60,9 @@ h2{letter-spacing:-.025em}
 .spec > a:hover .t{transform:none}
 .spec > a:active{background:color-mix(in srgb,var(--ink) 6%,transparent)}
 
-/* the orange field: a thin strip that stays clear of the text */
-.dither{width:6vw}
-[data-dither] > .wrap,[data-dither] > main{padding-left:calc(6vw + 12px)}
+/* the orange field reacts to a mouse, so on a phone it is left out and the text gets the full width */
+.dither{display:none}
+[data-dither] > .wrap,[data-dither] > main{padding-left:var(--pad)}
 
 /* section dividers: a little less air */
 .sect{padding-block:var(--s5)}

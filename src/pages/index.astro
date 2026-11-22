@@ -85,6 +85,9 @@ import Layout from '../layouts/Layout.astro';
 html.loading{overflow:hidden}
 .loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:var(--paper);transition:opacity .6s ease,visibility 0s linear .6s}
 .loader.gone{opacity:0;visibility:hidden}
+/* only shown when loading is slow: it fades in after a third of a second, so a quick (cached) visit never sees it */
+.loader{animation:ld-in .35s ease .35s both}
+@keyframes ld-in{from{opacity:0}}
 .loader .lc{display:grid;justify-items:center;gap:var(--s4)}
 .loader svg{height:min(58vh,540px);width:auto;overflow:visible}
 .loader .ink{fill:none;stroke:var(--ink);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
@@ -139,7 +142,8 @@ html.loading{overflow:hidden}
   requestAnimationFrame(frame);
   window.__loader = {
     set: function (p) { target = Math.max(target, Math.min(1, p)); },
-    done: function () { finished = true; target = 1; setTimeout(function () { if (!el.classList.contains('gone')) { path.style.strokeDashoffset = 0; fill.setAttribute('y', -500); pct.textContent = '100%'; gone(); } }, 1500); },
+    done: function () { finished = true; target = 1; if (performance.now() - t0 < 350) { gone(); return; }   // ready before it ever appeared: skip it
+      setTimeout(function () { if (!el.classList.contains('gone')) { path.style.strokeDashoffset = 0; fill.setAttribute('y', -500); pct.textContent = '100%'; gone(); } }, 1500); },
     whenGone: function () { return new Promise(function (r) { el.classList.contains('gone') ? r() : onGone.push(r); }); }
   };
   setTimeout(function () { if (!el.classList.contains('gone')) { finished = true; target = 1; } }, 25000);   // never trap the page
@@ -163,9 +167,9 @@ html.loading{overflow:hidden}
       <p class="side">Every page has a few things you can touch. Sound is off until you switch it on in the corner.</p>
     </div>
     <div class="spec doors">
-      <a href="/projects"><span class="n">01</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm, sorting you can hear.</span><span class="m">6 entries</span></a>
+      <a href="/projects"><span class="n">01</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm and two card-game simulators.</span><span class="m">5 entries</span></a>
       <a href="/music"><span class="n">02</span><span class="t">Music</span><span class="d">Cello and piano, and what I'm working on now.</span><span class="m">Cello</span></a>
-      <a href="/posts"><span class="n">03</span><span class="t">Posts</span><span class="d">Notes on building things, and on practice.</span><span class="m">Soon</span></a>
+      <a href="/interests"><span class="n">03</span><span class="t">Interests</span><span class="d">What I follow when I'm not practising or coding.</span><span class="m">4 entries</span></a>
     </div>
   </section>
   </div>

@@ -15,6 +15,7 @@ const fbm = (x, y) => noise(x, y) * .55 + noise(x * 2.1, y * 2.1) * .3 + noise(x
    then relaxes back when it leaves. */
 for (const host of $$('[data-dither]')) {
   const cv = document.createElement('canvas'); cv.className = 'dither'; cv.setAttribute('aria-hidden', 'true'); host.prepend(cv);
+  if (getComputedStyle(cv).display === 'none') continue;   // hidden on phones: don't run it at all
   const x = cv.getContext('2d'); let W = 0, H = 0, cols = 0, rows = 0, img = null, vis = false;
   const CELL = 3, Q = CELL / 6, SIG = 90 / CELL;   // 3 px cells; Q keeps the noise the same size on screen; SIG: bulge height (px / cell)
   const size = () => { W = cv.clientWidth; H = cv.clientHeight; cols = Math.max(1, Math.ceil(W / CELL)); rows = Math.max(1, Math.ceil(H / CELL)); cv.width = cols; cv.height = rows; img = x.createImageData(cols, rows); };
