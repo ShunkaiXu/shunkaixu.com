@@ -35,7 +35,7 @@ async function boot() {
   })();
   report();
   const [THREE, { RoomEnvironment }, { GLTFLoader }, BGU, { MeshoptDecoder }] = await Promise.all([
-    track(import('three'), .7), track(import('three/addons/environments/RoomEnvironment.js'), .05), track(import('three/addons/loaders/GLTFLoader.js'), .15), track(import('three/addons/utils/BufferGeometryUtils.js'), .05), track(import('three/addons/libs/meshopt_decoder.module.js'), .05)
+    track(import('./three-lite.js'), .7), track(import('three/addons/environments/RoomEnvironment.js'), .05), track(import('three/addons/loaders/GLTFLoader.js'), .15), track(import('three/addons/utils/BufferGeometryUtils.js'), .05), track(import('three/addons/libs/meshopt_decoder.module.js'), .05)
   ]);
   const hero = $('#hero'), canvas = $('#plot'), status = $('#status');
   const say = s => { if (status.textContent !== s) status.textContent = s; };

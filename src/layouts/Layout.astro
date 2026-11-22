@@ -33,6 +33,8 @@ import { SKY } from '../lib/skyline.js';
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script is:inline>try{var t=localStorage.getItem('site-theme')||'light';document.documentElement.dataset.siteTheme=t}catch(e){}</script>
+<link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/caveat-brush.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
 <style is:inline>.tabbar{display:none}
 /* page transitions: modern browsers cross-fade between pages; the header and tab bar stay put,
@@ -83,7 +85,7 @@ main p a:hover{text-decoration-color:var(--orange)}
 
 <title>{title}</title>
 <meta name="description" content={description}>
-{page === 'posts' && <meta name="robots" content="noindex">}
+{(page === 'posts' || page === '404') && <meta name="robots" content="noindex">}
 <link rel="canonical" href={url}>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">

@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Page not found · Shunkai Xu" page="404" description="This page doesn't exist on shunkaixu.com.">
+<style is:inline slot="head">
+.snap{margin:var(--s6) 0 var(--s3);cursor:pointer;touch-action:manipulation}
+.snap svg{display:block;width:100%;height:auto;overflow:visible}
+.snap path{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round}
+.snap .end{stroke:var(--orange)}
+.snap circle{fill:var(--paper);stroke:color-mix(in srgb,var(--ink) 50%,transparent);stroke-width:1}
+.snap figcaption{margin-top:var(--s3);color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:no-preference){
+  .snap .l,.snap .r{stroke-dasharray:1 1;stroke-dashoffset:1;animation:snap-draw 1.2s cubic-bezier(.6,.05,.3,1) .2s forwards}
+  .snap .r{animation-delay:.35s}
+  .snap .end{opacity:0;animation:snap-in .3s ease 1.2s forwards}
+  .snap.twang .l{animation:snap-wob-l .7s ease-out}.snap.twang .r{animation:snap-wob-r .7s ease-out}
+  .snap.twang .l,.snap.twang .r{stroke-dashoffset:0}
+}
+@keyframes snap-draw{to{stroke-dashoffset:0}}
+@keyframes snap-in{to{opacity:1}}
+@keyframes snap-wob-l{20%{transform:rotate(-3deg)}50%{transform:rotate(1.5deg)}75%{transform:rotate(-.6deg)}}
+@keyframes snap-wob-r{20%{transform:rotate(3deg)}50%{transform:rotate(-1.5deg)}75%{transform:rotate(.6deg)}}
+.snap .l{transform-origin:20px 60px}.snap .r{transform-origin:980px 60px}
+.lost{margin-top:var(--s6)}
+</style>
+
+<main id="main" class="wrap page">
+  <div class="head">
+    <span class="fig mono">Sheet 404</span>
+    <h1>This page snapped.</h1>
+    <p>There's nothing at this address. It may have moved, or the link has a typo. Everything that exists is below.</p>
+  </div>
+
+  <figure class="snap" id="snap" role="button" tabindex="0" aria-label="A snapped cello string. Tap to twang it.">
+    <svg viewBox="0 0 1000 120" aria-hidden="true">
+      <path class="l" pathLength="1" d="M20 60H430C468 60 488 52 497 36C503 25 497 14 486 17C476 20 478 34 490 36"/>
+      <path class="r" pathLength="1" d="M980 60H560C528 60 512 70 506 86C502 97 510 106 520 102C529 98 525 86 514 86"/>
+      <path class="end" d="M490 36l4-3M514 86l-4 3"/>
+      <circle cx="20" cy="60" r="4"/><circle cx="980" cy="60" r="4"/>
+    </svg>
+    <figcaption class="mono">Fig. 404&nbsp;&nbsp;An A string, snapped between the nut and the bridge. It happens to every cellist.</figcaption>
+  </figure>
+
+  <nav class="spec lost" aria-label="Pages">
+    <a href="/"><span class="n">01</span><span class="t">Home</span><span class="d">The robot arm, the cello that plays itself, and the Modulor.</span><span class="m">Start here</span></a>
+    <a href="/projects"><span class="n">02</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm and two card-game simulators.</span><span class="m">5 entries</span></a>
+    <a href="/music"><span class="n">03</span><span class="t">Music</span><span class="d">Full recordings, summers, performances and competitions.</span><span class="m">Cello</span></a>
+    <a href="/interests"><span class="n">04</span><span class="t">Interests</span><span class="d">What I follow when I'm not practising or coding.</span><span class="m">4 entries</span></a>
+    <a href="/about"><span class="n">05</span><span class="t">About</span><span class="d">Who I am, and how to reach me.</span><span class="m">Contact</span></a>
+  </nav>
+</main>
+
+<script>
+import { Sound } from '../scripts/site.js';
+const snap = document.getElementById('snap');
+const twang = () => {
+  snap.classList.remove('twang'); void snap.getBoundingClientRect(); snap.classList.add('twang');
+  // two notes a semitone apart: the sound of a string that has gone slack (only if Sound is on)
+  Sound.note(45, .22); Sound.note(46, .16, .05);
+};
+snap.addEventListener('click', twang);
+snap.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); twang(); } });
+</script>
+</Layout>

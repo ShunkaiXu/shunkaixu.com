@@ -23,6 +23,8 @@
     // only /api/* runs the Worker; every page and file is served directly
     "run_worker_first": ["/api/*"],
     // /about serves about.html, and /about.html redirects to /about.
-    "html_handling": "auto-trailing-slash"
+    "html_handling": "auto-trailing-slash",
+    // unknown addresses get our 404.html (with a real 404 status) instead of a blank error
+    "not_found_handling": "404-page"
   }
 }
