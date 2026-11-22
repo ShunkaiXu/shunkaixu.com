@@ -152,15 +152,15 @@ function init() {
 
   /* ---------- pieces ---------- */
   let PIECES = null, SAMPLES = null, playing = null;
-  const ELGAR = { id: 'elgar', title: 'Cello Concerto, opening', composer: 'Elgar', opus: 'Op. 85', soon: true };
   const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   (async () => {
     PIECES = (await import('./pieces.js')).default;
-    [ELGAR, ...PIECES].forEach((p, i) => {
+    PIECES.forEach((p, i) => {
       const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; li.appendChild(b); list.appendChild(li);
       b.innerHTML = `<span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${p.composer}<small>${p.title}, ${p.opus}</small></span><span class="m"></span>`;
       if (p.soon) { b.disabled = true; b.querySelector('.m').textContent = 'Soon'; }
-      else { b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', () => toggle(p, b)); p.btn = b; b.querySelector('.m').textContent = fmt(plan(p).total); }
+      else { b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', () => toggle(p, b)); p.btn = b; b.querySelector('.m').textContent = (p.synth ? 'Synth · ' : '') + fmt(p.live ? p.total : plan(p).total); }
+      if (p.synth) b.title = 'Played by the site, from cello samples';
     });
   })();
   // Download the sample bytes ahead of time (when the player scrolls near), decode them on the first play.
@@ -296,10 +296,12 @@ function init() {
       if (!p.el) { p.el = new Audio(p.audio); p.el.preload = 'auto'; p.node = r.ac.createMediaElementSource(p.el); }
       if (r.ac.state !== 'running') { try { await r.ac.resume(); } catch (e) {} }
       const out = r.ac.createGain(); out.gain.value = 1; out.connect(r.master); p.node.connect(out);
+      let live = null;
+      if (p.live) { const an = r.ac.createAnalyser(); an.fftSize = 2048; out.connect(an); live = { an, buf: new Float32Array(2048), sr: r.ac.sampleRate, rms: 0, slow: 0, dir: 1, flipAt: 0, m: 0, string: 1, k: 0, held: 0, stable: 0 }; }
       p.el.currentTime = 0;
       try { await p.el.play(); } catch (e) { p.node.disconnect(out); out.disconnect(); $('#np-title').textContent = 'Nothing playing'; return; }
       if (playing || !Sound.on) { p.el.pause(); p.node.disconnect(out); out.disconnect(); return; }
-      playing = { p, P: plan(p), t0: 0, ac: r.ac, out, nodes: [], el: p.el, btn, idx: 0 };
+      playing = { p, P: p.live ? { notes: [], strokes: [], total: p.total } : plan(p), t0: 0, ac: r.ac, out, nodes: [], el: p.el, btn, idx: 0, live };
       btn.setAttribute('aria-pressed', 'true'); $('#np-title').textContent = `${p.composer}, ${p.title}`;
       return;
     }
@@ -325,6 +327,46 @@ function init() {
     $('#np-title').textContent = 'Nothing playing'; $('#np-bar').style.width = '0'; $('#np-time').textContent = '0:00';
   }
 
+  /* ---------- listening to a recording ----------
+     Pitch by the YIN method on a 2048-sample window (downsampled by 2), loudness by RMS.
+     The pitch picks the string and finger position (like a cellist would: the highest string that
+     reaches the note, staying on the current string for small moves); loudness drives the bow, and a
+     sudden rise in loudness (a new bow stroke) turns it around. In pieces with piano the strongest pitch
+     is sometimes the piano's, so the hand only moves for steady, confident pitches. */
+  function yin(x, sr) {   // x: 2048 samples; read every other one, so sr is half the context rate
+    const W = 512, minLag = Math.max(2, Math.floor(sr / 1100)), maxLag = Math.min(W - 2, Math.ceil(sr / 62));
+    const d = new Float32Array(maxLag + 2), c = new Float32Array(maxLag + 2);
+    for (let tau = 1; tau <= maxLag + 1; tau++) { let s = 0; for (let i = 0; i < W; i++) { const v = x[2 * i] - x[2 * (i + tau)]; s += v * v; } d[tau] = s; }
+    let run = 0; c[0] = 1;
+    for (let tau = 1; tau <= maxLag + 1; tau++) { run += d[tau]; c[tau] = run > 0 ? d[tau] * tau / run : 1; }   // cumulative mean normalised difference
+    let tau = minLag; while (tau <= maxLag && c[tau] >= .15) tau++;
+    if (tau > maxLag) return null;
+    while (tau + 1 <= maxLag && c[tau + 1] < c[tau]) tau++;                                                    // settle into the dip
+    const a = c[tau - 1], b = c[tau], e = c[tau + 1], den = a - 2 * b + e, frac = den ? clamp((a - e) / (2 * den), -1, 1) : 0;
+    return { f: sr / (tau + frac), conf: 1 - b };
+  }
+  function listen(L, dt, t) {
+    L.an.getFloatTimeDomainData(L.buf);
+    let e = 0; for (let i = 0; i < L.buf.length; i += 2) e += L.buf[i] * L.buf[i]; const rms = Math.sqrt(e / (L.buf.length / 2));
+    L.slow += (rms - L.slow) * Math.min(1, dt * 1.5);
+    if (rms > L.slow * 1.45 && rms > .02 && t - L.flipAt > .28) { L.dir = -L.dir; L.flipAt = t; }   // a fresh attack: new bow stroke
+    L.rms += (rms - L.rms) * Math.min(1, dt * 12);
+    if (L.rms < .012) { L.held = 0; return null; }
+    const p = yin(L.buf, L.sr / 2);
+    if (p && p.conf > .82 && p.f > 62 && p.f < 1100) {
+      const m = Math.round(69 + 12 * Math.log2(p.f / 440));
+      if (m === L.m) L.stable += dt; else { L.stable = 0; L.m = m; }
+      if (L.stable > .06) {                       // only follow pitches that hold for a moment
+        let si = 3; for (let j = 0; j < 4; j++) if (m >= STR[j].open) { si = j; break; }
+        const kk = m - STR[L.string].open;
+        if (kk >= 0 && kk <= 7 && L.k >= 4) si = L.string;     // stay on the string for small moves up the neck
+        L.string = si; L.k = Math.max(0, m - STR[si].open);
+      }
+      L.held = .25;
+    } else L.held -= dt;
+    return { speed: clamp(.12 + L.rms * 3.2, .12, .9) };
+  }
+
   /* ---------- animation ---------- */
   const ease = u => lerp(u, u * u * (3 - 2 * u), .45);
   let visible = true, lastF = performance.now(), hy = NUT, hx = 0, hOn = 0, sway = 0, swayV = 0;
@@ -334,10 +376,24 @@ function init() {
     if (playing) {
       const { P, t0, ac, el } = playing, t = el ? el.currentTime : ac.currentTime - t0;
       if (t > P.total + .5 || (el && el.ended)) { stop(); return; }
-      let i = playing.idx; while (i > 0 && P.notes[i].t0 > t) i--; while (P.notes[i + 1] && P.notes[i + 1].t0 <= t) i++; playing.idx = i;
-      const n = P.notes[i];
       $('#np-bar').style.width = `${clamp(t / P.total, 0, 1) * 100}%`; $('#np-time').textContent = fmt(Math.max(0, t));
-      if (n && !n.rest && t >= n.t0) {
+      if (playing.live) {   // a real recording: follow the sound itself
+        const L = playing.live, st = listen(L, dt, t);
+        if (st) {
+          active = L.string; sounding = true; speed = st.speed;
+          B.s = clamp(B.s + L.dir * st.speed * dt, .05, .95);
+          if (B.s <= .05 || B.s >= .95) { L.dir = -L.dir; L.flipAt = t; }
+          B.tilt += (TILT[L.string] - B.tilt) * Math.min(1, dt * 10); B.lift += (0 - B.lift) * Math.min(1, dt * 20);
+          const y = L.k > 0 ? NUT + LEN * (1 - Math.pow(2, -L.k / 12)) : NUT;
+          hy += (y - hy) * Math.min(1, dt * (Math.abs(y - hy) > 30 ? 12 : 26)); hOn += ((L.k > 0 ? 1 : 0) - hOn) * Math.min(1, dt * 14);
+          if (L.stable > .3) vib = Math.sin(t * 5.6 * Math.PI * 2) * 1.6;
+          hx = xAt(STR[L.string], hy); STR[L.string].stop = hy;
+          swayV += (st.speed * L.dir * .6 - sway) * dt * 1.5;
+        } else { B.lift += (12 - B.lift) * Math.min(1, dt * 6); hOn += (0 - hOn) * Math.min(1, dt * 4); }
+      }
+      let i = playing.idx; while (i > 0 && P.notes[i] && P.notes[i].t0 > t) i--; while (P.notes[i + 1] && P.notes[i + 1].t0 <= t) i++; playing.idx = i;
+      const n = P.notes[i];
+      if (!playing.live && n && !n.rest && t >= n.t0) {
         const st = n.stroke, u = clamp((t - st.t0) / (st.t1 - st.t0), 0, 1);
         B.s = lerp(st.s0, st.s1, ease(u)); speed = Math.abs(st.s1 - st.s0) / (st.t1 - st.t0);
         active = n.string; sounding = true;
@@ -348,7 +404,7 @@ function init() {
         if (n.t1 - n.t0 > .35 && t - n.t0 > .18) vib = Math.sin(t * 5.6 * Math.PI * 2) * 1.8;
         hx = xAt(STR[n.string], hy); STR[n.string].stop = hy;
         swayV += (speed * (st.s1 > st.s0 ? 1 : -1) * .6 - sway) * dt * 1.5;
-      } else { B.lift += (12 - B.lift) * Math.min(1, dt * 8); }
+      } else if (!playing.live) { B.lift += (12 - B.lift) * Math.min(1, dt * 8); }
     } else { B.tilt += (0 - B.tilt) * Math.min(1, dt * 3); B.lift += (14 - B.lift) * Math.min(1, dt * 3); hOn += (0 - hOn) * Math.min(1, dt * 6); }
     sway += swayV * dt; swayV *= Math.exp(-dt * 2.5); sway *= Math.exp(-dt * .8);
     wrap.style.transform = `rotate(${clamp(sway, -1, 1).toFixed(3)}deg)`;
