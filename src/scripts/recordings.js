@@ -11,7 +11,8 @@ if (list && bar) {
   let cur = -1, dragging = false;
   const rows = PIECES.map((p, i) => {
     const li = document.createElement('li');
-    li.innerHTML = `<button type="button" aria-pressed="false"><span class="n"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9.5-5.5z"/></svg>0${i + 1}</span><span class="t">${p.composer}</span><span class="d">${p.fullTitle}</span><span class="m">${fmt(p.fullLen)}</span></button>`;
+    const pic = p.img ? `<img src="${p.img}" alt="" width="400" height="500" loading="lazy" decoding="async">` : '<span class="noimg mono">Livestream</span>';
+    li.innerHTML = `<button type="button" aria-pressed="false"><span class="n"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9.5-5.5z"/></svg>0${i + 1}</span><span class="pic">${pic}</span><span class="t">${p.composer}</span><span class="d">${p.fullTitle}</span><span class="m">${fmt(p.fullLen)}</span></button>`;
     list.appendChild(li);
     const b = li.querySelector('button'); b.addEventListener('click', () => pick(i)); return b;
   });

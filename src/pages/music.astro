@@ -3,26 +3,30 @@ import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="Music · Shunkai Xu" page="music">
 <style is:inline slot="head">
-.sec{margin-top:var(--s7)}
-.sec h2{font-size:clamp(29px,3.2vw,47px);margin-bottom:var(--s4)}
+
+.sec h2{margin-bottom:var(--s5)}
 .sec > p{max-width:62ch;color:var(--ink-2);margin:calc(-1 * var(--s2)) 0 var(--s4)}
 .spec > a .m{color:var(--blue)}
 .spec > div{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding:var(--s4) 0;border-bottom:1px solid var(--rule);align-items:baseline}
 .spec .d em{font-style:normal;color:var(--muted)}
 /* Recordings: full performances, one player */
 .recs > li{display:block;padding:0}
-.recs button{-webkit-appearance:none;appearance:none;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:baseline;width:100%;padding:var(--s4) 0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.recs button{-webkit-appearance:none;appearance:none;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%;padding:var(--s4) 0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 .recs .n{display:flex;align-items:center;gap:8px}
 .recs .n svg{width:11px;height:11px;flex:none;fill:currentColor;opacity:.0;transition:opacity .2s}
 .recs button:hover .n svg,.recs button[aria-pressed="true"] .n svg{opacity:1}
-.recs button[aria-pressed="true"] .n,.recs button[aria-pressed="true"] .t{color:var(--orange)}
+.recs button[aria-pressed="true"] .n{color:var(--orange)}
 .recs .m{font-variant-numeric:tabular-nums}
+.recs .n{grid-column:1/2}.recs .pic{grid-column:2/4}.recs .t{grid-column:4/7}.recs .d{grid-column:7/11;font-style:italic}.recs .m{grid-column:11/13}
+.recs .pic img,.recs .noimg{display:block;width:100%;height:auto;max-width:96px;aspect-ratio:4/5;object-fit:cover;background:var(--surface)}
+.recs .noimg{display:grid;place-items:center;font-size:10.5px;color:var(--muted);border:1px solid var(--rule);background:none}
+.recs button:hover img{filter:brightness(1.06)}
 .recbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px;margin-top:var(--s4);padding:14px 16px;border:1px solid var(--rule);background:var(--sheet)}
 .recbar .pp{-webkit-appearance:none;appearance:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);display:grid;place-items:center;cursor:pointer}
 .recbar .pp svg{width:14px;height:14px;fill:currentColor}
 .recbar .pp .pa{display:none}.recbar.playing .pp .pl{display:none}.recbar.playing .pp .pa{display:block}
 .recbar .info{min-width:0;display:grid;gap:8px}
-.recbar .ti{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recbar .ti{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .recbar .ti span{color:var(--muted)}
 .recbar input{-webkit-appearance:none;appearance:none;width:100%;height:18px;margin:0;background:none;cursor:pointer}
 .recbar input::-webkit-slider-runnable-track{height:3px;background:linear-gradient(var(--orange),var(--orange)) 0/var(--p,0%) 100% no-repeat,var(--rule)}
@@ -31,12 +35,11 @@ import Layout from '../layouts/Layout.astro';
 .recbar input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;margin-top:-5px;border-radius:50%;background:var(--ink);border:0}
 .recbar input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ink);border:0}
 .recbar .tm{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.sec > p.rec-note{margin:var(--s3) 0 0;font-size:13px;color:var(--muted)}
+.sec > p.rec-note{margin:var(--s3) 0 0}
 </style>
 
 <main id="main" class="wrap page">
   <div class="head">
-    <span class="fig mono">Sheet 3 / Music</span>
     <h1>Music</h1>
     <p>Cello is my main instrument, and I play piano too. I've played for more than five years: solo repertoire, chamber music in the summers, and a few international competitions along the way. I study with Aihao Zheng.</p>
   </div>
@@ -50,7 +53,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="info"><span class="ti" id="rec-title">Pick a recording</span><input type="range" id="rec-seek" min="0" max="1000" value="0" step="1" aria-label="Position in the recording"></div>
       <span class="tm mono" id="rec-time">0:00 / 0:00</span>
     </div>
-    <p class="rec-note mono">Recorded by Shunkai Xu. Elgar and Tchaikovsky with piano; Dvořák from the Music@Menlo livestream, 26 July 2025.</p>
+    <p class="rec-note cap-text">Recorded by Shunkai Xu. Elgar and Tchaikovsky with piano; Dvořák from the Music@Menlo livestream, 26 July 2025.</p>
   </section>
 
   <section class="sec" aria-labelledby="h-now">

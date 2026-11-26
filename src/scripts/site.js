@@ -233,3 +233,6 @@ export function initRules() {
   });
 }
 initRules();
+
+// muted background clips: never move for people who asked for reduced motion
+if (reduce) $$('video[autoplay]').forEach(v => { v.autoplay = false; v.pause(); });

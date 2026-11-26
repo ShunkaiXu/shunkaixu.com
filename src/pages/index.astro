@@ -15,11 +15,14 @@ import Layout from '../layouts/Layout.astro';
 .hero .corner{position:absolute;top:var(--s4);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;color:var(--muted);pointer-events:none;z-index:var(--z-object)}.hero .corner .tools{pointer-events:auto}.hero .btn{background:color-mix(in srgb,var(--paper) 80%,transparent)}
 .hero .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
 .hero.live .wait{display:none}
-.intro{padding-block:var(--s7) var(--s6)}
-.intro h2{grid-column:1/10;font-size:clamp(34px,4.3vw,62px);line-height:1.04}
+.intro{padding-block:var(--sec) var(--half)}
+.intro h2{grid-column:1/8;font-size:clamp(40px,5.4vw,84px);line-height:1;letter-spacing:-.025em}
 .intro h2 span{color:var(--muted)}
-.intro .side{grid-column:10/13;align-self:end;color:var(--ink-2);font-size:15.5px}
-.doors{margin-top:var(--s6)}
+.intro .side{grid-column:9/13;align-self:start;color:var(--ink-2);font-size:18px}
+.portrait{margin:0 0 var(--s4)}
+.portrait video{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--surface)}
+.portrait figcaption{margin-top:var(--s2);font-size:15px}
+.doors{margin-top:var(--sec)}
 .board{margin-top:var(--s5);border-top:1px solid var(--ink)}
 .board li{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;padding:var(--s3) 0;border-bottom:1px solid var(--rule)}
 .board .k{grid-column:1/4;color:var(--muted)}
@@ -29,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
 .cell.f::after{opacity:1;transition:none}
 .cell.f{animation:flap .11s linear}
 @keyframes flap{0%{transform:perspective(200px) rotateX(0)}50%{transform:perspective(200px) rotateX(-70deg)}100%{transform:perspective(200px) rotateX(0)}}
-.sect{padding-block:var(--s6)}
+.sect{padding-block:var(--half)}
 .sect h2{font-size:clamp(29px,3.2vw,47px)}
 .play .cols{align-items:center}
 .play .pick{grid-column:1/8}
@@ -39,10 +42,10 @@ import Layout from '../layouts/Layout.astro';
 .spec.pieces > li{display:block;padding:0;border:0}
 .pieces button{-webkit-appearance:none;appearance:none;display:grid;grid-template-columns:2.2em 1fr auto;gap:12px;align-items:baseline;width:100%;padding:var(--s3) 0;border:0;border-bottom:1px solid var(--rule);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit}
 .pieces button .n{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
-.pieces button .t{font-weight:600;letter-spacing:-.015em;font-size:19px}
-.pieces button .t small{display:block;font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0}
+.pieces button .t{font-family:var(--display);font-weight:400;letter-spacing:-.01em;font-size:24px}
+.pieces button .t small{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:16px;color:var(--muted);letter-spacing:0}
 .pieces button .m{font-family:var(--mono);font-size:13px;color:var(--muted)}
-.pieces button:hover .t{color:var(--orange)}
+.pieces button:hover .t{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
 .pieces button[aria-pressed="true"] .n{color:var(--orange)}
 .pieces button[aria-pressed="true"] .n::before{content:"▶ "}
 .pieces button[disabled]{cursor:default;opacity:.55}
@@ -55,15 +58,14 @@ import Layout from '../layouts/Layout.astro';
 .cellobox{position:relative;aspect-ratio:940/1660;width:min(100%,calc(84vh * 940 / 1660),480px);margin:0 0 0 auto}
 .cello-sway{position:absolute;inset:0;transform-origin:50% 92%;will-change:transform}
 .cellobox svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.intro{padding-block:var(--s8) var(--s7)}
 .intro .cols{position:relative}
 @media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro h2,.intro .side{grid-column:1/-1}.intro .side{margin-top:var(--s4)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
-.finale{position:relative;padding-block:var(--s7) var(--s7)}
+.finale{position:relative;padding-block:var(--half) var(--sec)}
 .finale .stage{display:block}
 .mod{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%}
 .mod-fig{grid-column:1/8;margin:0}
-.mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:13px;color:var(--muted);max-width:52em}
-.mod-cap b{font-weight:500;color:var(--ink)}
+.mod-cap{display:grid;gap:4px;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--rule);font-size:16px;font-style:italic;color:var(--muted);max-width:40em}
+.mod-cap b{font-family:var(--mono);font-style:normal;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:400;color:var(--ink)}
 .mod-art svg{display:block;width:100%;height:auto;overflow:visible}
 .mod-art .ln{fill:none;stroke:var(--ink);stroke-width:1.1}
 .mod-art .dim{fill:none;stroke:var(--blue);stroke-width:1}
@@ -73,9 +75,9 @@ import Layout from '../layouts/Layout.astro';
 .mod-art .rr{fill:var(--orange)}.mod-art .rb{fill:var(--blue)}
 .mod-art .ro{fill:var(--paper);stroke:var(--ink);stroke-width:1}
 .mod-end{grid-column:9/13}
-.mod-name{font-size:clamp(46px,5.6vw,92px);font-weight:700;letter-spacing:-.045em;line-height:.95;margin:0;opacity:0;will-change:opacity,transform}
+.mod-name{font-size:clamp(52px,6.4vw,104px);font-weight:400;letter-spacing:-.03em;line-height:.95;margin:0;opacity:0;will-change:opacity,transform}
 .fquote{margin:var(--s5) 0 0;opacity:0;will-change:opacity,transform}
-.fquote p{font-size:clamp(21px,2.1vw,32px);font-weight:600;letter-spacing:-.022em;line-height:1.12;margin:0}
+.fquote p{font-family:var(--display);font-style:italic;font-size:clamp(26px,2.6vw,40px);font-weight:400;letter-spacing:-.01em;line-height:1.12;margin:0}
 .fquote p span{display:block;color:var(--muted)}
 .fquote cite{display:block;margin-top:var(--s3);font-style:normal;font-size:13.5px;color:var(--muted);letter-spacing:.04em}
 @media (max-width:860px){.mod-fig,.mod-end{grid-column:1/-1}.mod-end{margin-top:var(--s5)}}
@@ -155,16 +157,15 @@ html.loading{overflow:hidden}
     <canvas id="plot" aria-label="A UR5e robot arm breaks out of the page and writes the name Shunkai Xu. Drag on the page to draw with it." role="img"></canvas>
     <div class="wait mono">Loading the drawing</div>
     <div class="cap">
-      <div class="fig mono"><b id="status">Warming up</b><span>Drag near the name and the arm draws with you.</span></div>
+      <div class="fig mono"><b id="status">Warming up</b><span class="cap-text">Drag near the name and the arm draws with you.</span></div>
       <div class="tools"><button class="btn" id="redraw" type="button">Redraw name</button><button class="btn" id="clear" type="button">Clear my lines</button></div>
     </div>
   </section>
 
-  <div data-dither class="dhost">
-  <section class="wrap intro">
+    <section class="wrap intro">
     <div class="cols">
-      <h2>I play the cello, build iPhone apps and program robots. <span>This site is where those three meet.</span></h2>
-      <p class="side">Every page has a few things you can touch. Sound is off until you switch it on in the corner.</p>
+      <h2>I play the cello, build iPhone apps and program robots.</h2>
+      <div class="side"><figure class="portrait"><video src="/media/elgar-portrait.mp4" poster="/media/elgar-portrait.jpg" muted loop playsinline autoplay preload="none" aria-label="Shunkai playing the Elgar Cello Concerto on stage"></video><figcaption class="cap-text">Elgar, Cello Concerto in E minor, 2026.</figcaption></figure><p>I’m a high school student in Shanghai. Below: a minute of four pieces I’ve performed, what I’m working on now, and the projects behind the robot above.</p></div>
     </div>
     <div class="spec doors">
       <a href="/projects"><span class="n">01</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm and two card-game simulators.</span><span class="m">5 entries</span></a>
@@ -172,19 +173,17 @@ html.loading{overflow:hidden}
       <a href="/interests"><span class="n">03</span><span class="t">Interests</span><span class="d">What I follow when I'm not practising or coding.</span><span class="m">4 entries</span></a>
     </div>
   </section>
-  </div>
 
   <div class="wrap"><div class="rule" data-chord="0"></div></div>
 
   <section class="wrap sect play" id="play">
     <div class="cols">
       <div class="pick">
-        <span class="mono label">Fig. 2</span>
         <h2>Play me something</h2>
         <p class="side">Pick a piece and the cello plays it: the bow changes direction, the left hand shifts, and only the stopped part of the string vibrates.</p>
         <ol class="spec pieces" id="pieces"></ol>
         <div class="now mono" id="nowplaying" aria-live="polite"><span id="np-title">Nothing playing</span><span class="bar"><i id="np-bar"></i></span><span id="np-time">0:00</span></div>
-        <p class="credit mono">Recordings: Shunkai Xu, one-minute excerpts (Elgar and Tchaikovsky with piano; Dvořák at Music@Menlo 2025, from the festival livestream).</p>
+        <p class="credit">Recordings: Shunkai Xu, one-minute excerpts (Elgar and Tchaikovsky with piano; Dvořák at Music@Menlo 2025, from the festival livestream).</p>
       </div>
       <div class="stage"><div id="cello" class="cellobox"></div></div>
     </div>
@@ -209,7 +208,7 @@ html.loading{overflow:hidden}
       <div class="wrap mod">
         <figure class="mod-fig">
           <div class="mod-art" id="modulor" aria-hidden="true"></div>
-          <figcaption class="mono mod-cap"><b>Fig. 4&nbsp;&nbsp;The Modulor</b><span>Le Corbusier, 1948: two series of measures, red and blue, each about 1.618 times the last. This site is spaced with them.</span></figcaption>
+          <figcaption class="mod-cap"><b>The Modulor</b><span>Le Corbusier, 1948: two series of measures, red and blue, each about 1.618 times the last. This site is spaced with them.</span></figcaption>
         </figure>
         <div class="mod-end">
           <h2 class="mod-name" id="mod-name">Shunkai Xu</h2>
@@ -224,7 +223,6 @@ html.loading{overflow:hidden}
 import '../scripts/site.js';
 import '../scripts/home.js';
 import '../scripts/player.js';
-import '../scripts/dither.js';
 import '../scripts/finale.js';
 </script>
 </Layout>
