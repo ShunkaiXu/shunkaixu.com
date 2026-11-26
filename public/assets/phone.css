@@ -77,8 +77,8 @@ h2{letter-spacing:-.025em}
 .hero .fig{border-radius:12px;margin-left:-4px}
 .intro{padding-block:var(--sec) var(--half)}
 .intro h2{font-size:38px;line-height:1.02}
-.intro .side{margin-top:var(--s5)}
-.portrait video{max-height:62svh}
+.portrait{width:100%;max-width:420px}
+.intro .lead p{font-size:18px}
 .intro .side{font-size:16px}
 .doors{margin-top:var(--sec)}
 

@@ -16,11 +16,19 @@ import Layout from '../layouts/Layout.astro';
 .hero .wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
 .hero.live .wait{display:none}
 .intro{padding-block:var(--sec) var(--half)}
-.intro h2{grid-column:1/8;font-size:clamp(40px,5.4vw,84px);line-height:1;letter-spacing:-.025em}
+.intro h2{font-size:clamp(40px,5.4vw,84px);line-height:1;letter-spacing:-.025em}
 .intro h2 span{color:var(--muted)}
-.intro .side{grid-column:9/13;align-self:start;color:var(--ink-2);font-size:18px}
-.portrait{margin:0 0 var(--s4)}
-.portrait video{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--surface)}
+.intro .lead{grid-column:1/8}
+.intro .lead p{margin-top:var(--s5);max-width:30em;font-size:21px;line-height:1.45;color:var(--ink-2)}
+.portrait{grid-column:9/13;justify-self:end;width:min(100%,380px);margin:0}
+.portrait .vid{position:relative;aspect-ratio:4/5;background:var(--surface);overflow:hidden}
+.portrait video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vplay{-webkit-appearance:none;appearance:none;position:absolute;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 16px 0 14px;border:0;border-radius:999px;
+  background:color-mix(in srgb,var(--paper) 90%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:var(--ink);font:500 16px/1 var(--serif);cursor:pointer;transition:opacity .25s}
+.vplay svg{width:12px;height:12px;fill:var(--orange)}
+.vplay .mono{color:var(--muted);font-size:11.5px}
+.portrait.playing .vplay{opacity:0;pointer-events:none}
+.portrait.playing .vid{cursor:pointer}
 .portrait figcaption{margin-top:var(--s2);font-size:15px}
 .doors{margin-top:var(--sec)}
 .board{margin-top:var(--s5);border-top:1px solid var(--ink)}
@@ -59,7 +67,7 @@ import Layout from '../layouts/Layout.astro';
 .cello-sway{position:absolute;inset:0;transform-origin:50% 92%;will-change:transform}
 .cellobox svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .intro .cols{position:relative}
-@media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro h2,.intro .side{grid-column:1/-1}.intro .side{margin-top:var(--s4)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
+@media (max-width:860px){.hero{height:min(640px,82svh)}.play .pick,.play .stage{grid-column:1/-1}.play .stage{margin-top:var(--s5)}.intro .lead,.portrait{grid-column:1/-1}.portrait{justify-self:start;margin-top:var(--s5)}.board .k,.board .cells{grid-column:1/-1}.board .k{margin-bottom:6px}}
 .finale{position:relative;padding-block:var(--half) var(--sec)}
 .finale .stage{display:block}
 .mod{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;width:100%}
@@ -164,8 +172,15 @@ html.loading{overflow:hidden}
 
     <section class="wrap intro">
     <div class="cols">
-      <h2>I play the cello, build iPhone apps and program robots.</h2>
-      <div class="side"><figure class="portrait"><video src="/media/elgar-portrait.mp4" poster="/media/elgar-portrait.jpg" muted loop playsinline autoplay preload="none" aria-label="Shunkai playing the Elgar Cello Concerto on stage"></video><figcaption class="cap-text">Elgar, Cello Concerto in E minor, 2026.</figcaption></figure><p>I’m a high school student in Shanghai. Below: a minute of four pieces I’ve performed, what I’m working on now, and the projects behind the robot above.</p></div>
+      <div class="lead">
+        <h2>I play the cello, build iPhone apps and program robots.</h2>
+        <p>I’m a high school student in Shanghai. Below: a minute of four pieces I’ve performed, what I’m working on now, and the projects behind the robot above.</p>
+      </div>
+      <figure class="portrait" id="stage-clip">
+        <div class="vid"><video src="/media/stage.mp4" poster="/media/stage.jpg" preload="none" playsinline aria-label="Shunkai playing the cello on stage"></video>
+          <button class="vplay" type="button"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9.5-5.5z"/></svg><span>Play with sound</span><span class="mono">0:30</span></button></div>
+        <figcaption class="cap-text">On stage, 2026.</figcaption>
+      </figure>
     </div>
     <div class="spec doors">
       <a href="/projects"><span class="n">01</span><span class="t">Projects</span><span class="d">Kept, Tempo, the robot arm and two card-game simulators.</span><span class="m">5 entries</span></a>
@@ -224,5 +239,20 @@ import '../scripts/site.js';
 import '../scripts/home.js';
 import '../scripts/player.js';
 import '../scripts/finale.js';
+import { Sound, $ } from '../scripts/site.js';
+// the stage clip only moves when someone asks to hear it, and it plays with sound
+const fig = $('#stage-clip'), v = fig && fig.querySelector('video');
+if (v) {
+  const sbtn = $('#sound');
+  fig.querySelector('.vplay').addEventListener('click', () => {
+    if (!Sound.on) sbtn.click();   // the header switch is the master: turn it on, as the music players do
+    v.play().catch(() => {});
+  });
+  fig.querySelector('.vid').addEventListener('click', e => { if (!e.target.closest('.vplay') && !v.paused) v.pause(); });
+  v.addEventListener('play', () => fig.classList.add('playing'));
+  v.addEventListener('pause', () => fig.classList.remove('playing'));
+  v.addEventListener('ended', () => { fig.classList.remove('playing'); v.load(); });
+  sbtn.addEventListener('click', () => { if (!Sound.on) v.pause(); });
+}
 </script>
 </Layout>

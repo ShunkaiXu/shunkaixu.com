@@ -165,10 +165,10 @@ button{font:inherit;color:inherit}
 body{font-family:var(--serif);font-size:19px;line-height:1.5;font-optical-sizing:auto;font-variant-numeric:oldstyle-nums proportional-nums}
 h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.02}
 .head h1{font-size:clamp(56px,9vw,136px);letter-spacing:-.03em;line-height:.9;margin:0 0 0 -.05em}
-.head{align-items:start;padding-bottom:var(--s6)}
+.head{align-items:start;padding-bottom:0}
 .head .fig{display:none}
 /* break the centre: the intro paragraph starts a third of the way in, under the title */
-.head p{grid-column:5/12;font-size:clamp(20px,1.8vw,25px);line-height:1.42;color:var(--ink-2);margin-top:var(--s6);max-width:none}
+.head p{grid-column:5/12;font-size:clamp(20px,1.8vw,25px);line-height:1.42;color:var(--ink-2);margin-top:var(--s4);max-width:none}
 @media (max-width:860px){.head p{grid-column:1/-1}}
 .mono{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .spec{border-top:1px solid var(--ink)}

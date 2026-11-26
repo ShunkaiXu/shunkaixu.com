@@ -19,7 +19,9 @@ import Layout from '../layouts/Layout.astro';
 .recs .m{font-variant-numeric:tabular-nums}
 .recs .n{grid-column:1/2}.recs .pic{grid-column:2/4}.recs .t{grid-column:4/7}.recs .d{grid-column:7/11;font-style:italic}.recs .m{grid-column:11/13}
 .recs .pic img,.recs .noimg{display:block;width:100%;height:auto;max-width:96px;aspect-ratio:4/5;object-fit:cover;background:var(--surface)}
-.recs .noimg{display:grid;place-items:center;font-size:10.5px;color:var(--muted);border:1px solid var(--rule);background:none}
+.recs .noimg b{font-family:var(--display);font-weight:400;font-size:17px;line-height:1}
+.recs .noimg i{font-size:11.5px;line-height:1.2;opacity:.7}
+.recs .noimg{display:flex;flex-direction:column;justify-content:flex-end;gap:2px;padding:9px;background:var(--ink);color:var(--paper)}
 .recs button:hover img{filter:brightness(1.06)}
 .recbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px;margin-top:var(--s4);padding:14px 16px;border:1px solid var(--rule);background:var(--sheet)}
 .recbar .pp{-webkit-appearance:none;appearance:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);display:grid;place-items:center;cursor:pointer}
