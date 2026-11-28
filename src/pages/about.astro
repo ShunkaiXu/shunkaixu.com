@@ -6,7 +6,8 @@ import Layout from '../layouts/Layout.astro';
 .bio{grid-column:1/8;font-size:clamp(19px,1.7vw,24px);line-height:1.42}
 .bio p + p{margin-top:var(--s4)}
 .facts{grid-column:9/13;display:grid;grid-template-columns:auto 1fr;gap:12px 22px;border-top:1px solid var(--ink);padding-top:var(--s4);align-self:start}
-.facts dt{color:var(--muted)}
+.facts dt{color:var(--muted);font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;padding-top:.35em}
+.facts dd{margin:0}
 .contact{margin-top:var(--s7)}
 .contact h2{font-size:clamp(29px,3.2vw,47px);margin-bottom:var(--s4)}
 @media (max-width:860px){.bio,.facts{grid-column:1/-1}.facts{margin-top:var(--s5)}}
@@ -19,9 +20,9 @@ import Layout from '../layouts/Layout.astro';
   <div class="cols">
     <div class="bio">
       <p>I'm Shunkai, a high school student in Shanghai. I play the cello, build iPhone apps in Swift, and write the code that makes robots move.</p>
-      <p>I like work that has to be exact and still feel alive: a phrase in a concerto, a smooth arm trajectory, an app that gets out of your way. Next I want to study computational economics, where code and markets meet.</p>
+      <p>Next I want to study computational economics.</p>
     </div>
-    <dl class="facts mono">
+    <dl class="facts">
       <dt>Based in</dt><dd>Shanghai</dd>
       <dt>Studying</dt><dd>IB: Maths, Physics, CS, Economics (HL)</dd>
       <dt>Plays</dt><dd>Cello, piano</dd>

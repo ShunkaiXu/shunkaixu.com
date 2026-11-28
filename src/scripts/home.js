@@ -331,7 +331,7 @@ async function boot() {
     camera.updateProjectionMatrix();
   }
   size(); new ResizeObserver(size).observe(canvas);
-  const LOOK = portrait ? new THREE.Vector3(0, .1, -.05) : new THREE.Vector3(0, .25, -.06), DIR = new THREE.Vector3(0, .95, .52).normalize(), par = { x: 0, y: 0 }, mouse = { x: 0, y: 0 };
+  const LOOK = portrait ? new THREE.Vector3(0, .23, -.05) : new THREE.Vector3(0, .25, -.06), DIR = new THREE.Vector3(0, .95, .52).normalize(), par = { x: 0, y: 0 }, mouse = { x: 0, y: 0 };
   hero.addEventListener('pointermove', e => { const r = hero.getBoundingClientRect(); mouse.x = (e.clientX - r.left) / r.width - .5; mouse.y = (e.clientY - r.top) / r.height - .5; });
   if (reduce) { // draw the name instantly
     letters.forEach(L => L.strokes.forEach(st => { ctxName.beginPath(); st.forEach((p, i) => { const q = toPx(p.x, p.z); i ? ctxName.lineTo(...q) : ctxName.moveTo(...q); }); ctxName.stroke(); }));

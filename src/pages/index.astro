@@ -9,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 .hero .cap{position:absolute;left:var(--pad);right:var(--pad);bottom:var(--s5);display:flex;justify-content:space-between;align-items:end;gap:var(--s4);flex-wrap:wrap;pointer-events:none;z-index:var(--z-object)}
 .hero .cap > *{pointer-events:auto}
 .hero .fig{display:grid;gap:4px;padding:8px 11px;margin-left:-11px;background:color-mix(in srgb,var(--paper) 86%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.hero .fig b{font-weight:500;color:var(--ink)}
+.hero .fig b{font-family:var(--serif);font-weight:400;font-size:18px;line-height:1.35;color:var(--ink)}
 .hero .fig span{color:var(--muted)}
 .hero .tools{display:flex;gap:var(--s2)}
 .hero .corner{position:absolute;top:var(--s4);left:var(--pad);right:var(--pad);display:flex;justify-content:space-between;align-items:center;color:var(--muted);pointer-events:none;z-index:var(--z-object)}.hero .corner .tools{pointer-events:auto}.hero .btn{background:color-mix(in srgb,var(--paper) 80%,transparent)}
@@ -163,7 +163,7 @@ html.loading{overflow:hidden}
     <canvas id="plot" aria-label="A UR5e robot arm breaks out of the page and writes the name Shunkai Xu. Drag on the page to draw with it." role="img"></canvas>
     <div class="wait mono">Loading the drawing</div>
     <div class="cap">
-      <div class="fig mono"><b id="status">Warming up</b><span class="cap-text">Drag near the name and the arm draws with you.</span></div>
+      <div class="fig"><b id="status">Warming up</b></div>
       <div class="tools"><button class="btn" id="redraw" type="button">Redraw name</button><button class="btn" id="clear" type="button">Clear my lines</button></div>
     </div>
   </section>

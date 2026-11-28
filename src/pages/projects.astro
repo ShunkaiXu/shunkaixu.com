@@ -3,9 +3,9 @@ import Layout from '../layouts/Layout.astro';
 ---
 <Layout title="Projects · Shunkai Xu" page="projects">
 <style is:inline slot="head">
-.tempo{padding-block:var(--s6)}
+.tempo{padding-block:var(--sec) 0}
 .tempo .cols{align-items:end}
-.tempo h2{grid-column:1/8;font-size:clamp(29px,3.2vw,47px)}
+.tempo h2{grid-column:1/8;font-size:clamp(36px,4vw,60px)}
 .tempo > .cols > p{grid-column:8/13;color:var(--ink-2)}
 .tbox{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--s6);align-items:center;margin-top:var(--s5);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding-block:var(--s5)}
 .dial{width:min(100%,400px);aspect-ratio:1;justify-self:center;touch-action:none;cursor:grab;outline:none}
@@ -20,12 +20,14 @@ import Layout from '../layouts/Layout.astro';
 .dial .hub{fill:var(--ink)}
 .dial:focus-visible .face{stroke:var(--blue);stroke-width:2}
 .read{font-family:var(--mono);font-size:clamp(64px,9vw,132px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
-.read small{display:block;font-size:14px;letter-spacing:0;color:var(--muted);margin-bottom:var(--s3)}
+.read small{display:block;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--s3)}
 .tools{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s4);align-items:center}
 .tools + .tools{margin-top:var(--s2)}
-.tlog{margin-top:var(--s5);color:var(--muted)}
+.tlog{margin-top:var(--s5);color:var(--muted);font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:0;font-size:16px}
 .tlog b{color:var(--ink);font-weight:500}
 @media (max-width:860px){.tempo h2,.tempo > .cols > p{grid-column:1/-1}.tempo > .cols > p{margin-top:var(--s3)}.tbox{grid-template-columns:1fr;gap:var(--s5)}}
+/* phones: presets in one even row, Start and Reset in another */
+@media (max-width:760px){.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.tools + .tools{grid-template-columns:2fr 1fr}.tools .btn{justify-content:center;padding:0 8px;border-radius:999px}#tgo{background:var(--ink);color:var(--paper)}}
 </style>
 
 <main id="main" class="wrap page">
@@ -52,7 +54,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="tools" role="group" aria-label="Presets">
           <button class="btn on" type="button" data-pre="25" data-name="Focus" aria-pressed="true">Focus 25</button>
           <button class="btn" type="button" data-pre="5" data-name="Break" aria-pressed="false">Break 5</button>
-          <button class="btn" type="button" data-pre="45" data-name="Cello practice" aria-pressed="false">Cello practice 45</button>
+          <button class="btn" type="button" data-pre="45" data-name="Cello practice" aria-pressed="false">Cello 45</button>
         </div>
         <div class="tools">
           <button class="btn" type="button" id="tgo">Start</button>
